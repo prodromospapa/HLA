@@ -27,4 +27,6 @@ for direction in directions:
     sns.heatmap(df_data,xticklabels=["A", "B", "C", "DRB1", "DQB1"],yticklabels=[],cmap=cmap)
     plt.title(f"{args.id} ({direction})")
     f.close()
-plt.savefig(f'{args.id}.png', dpi=300)
+plt.tight_layout()    
+#plt.savefig(f'{args.id}.png', dpi=300)
+plt.show()
