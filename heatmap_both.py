@@ -19,8 +19,8 @@ id_list = pd.read_pickle("all_np.pickle").index.tolist()# find a better way to l
 directions = ["GvH", "HvG"]
 for direction in directions:
     plt.subplot(1, 2, directions.index(direction)+1)
-    with open(f'ouput_{direction}.npy', 'rb') as f:
-        data = np.load(f)
+    f = open(f'ouput_{direction}.npy', 'rb')
+    data = np.load(f)
     df_data = pd.DataFrame(data[id_list.index(args.id)])
     cmap_dict = {-1: "white", 0: 'black', 1: 'yellow', 2: 'red'}
     cmap = ListedColormap([cmap_dict[i] for i in cmap_dict.keys()])
