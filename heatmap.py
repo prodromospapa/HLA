@@ -28,7 +28,8 @@ if id:
     cmap = ListedColormap([cmap_dict[i] for i in cmap_dict.keys()])
     sns.heatmap(df_data,xticklabels=["A", "B", "C", "DRB1", "DQB1"],yticklabels=[],cmap=cmap)
     plt.title(f"{id} ({args.direction})")
-    plt.savefig(f'{id}_{args.direction}.png', dpi=300)
+    #plt.savefig(f'{id}_{args.direction}.png', dpi=300)
+    plt.show()
     #do it with plt.show() instead of plt.savefig()
 else:
     if not os.path.exists("heatmaps"):
