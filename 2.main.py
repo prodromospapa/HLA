@@ -49,14 +49,14 @@ parser = argparse.ArgumentParser(
                     epilog='Text at the bottom of help')
 
 parser.add_argument('--threads','-t', type=int, help='Number of threads to use', required=True)
-parser.add_argument('--input','-i',default="all_np.pickle", type=str, help='Input file', required=True)
+parser.add_argument('--input','-i', type=str, help='Input file', required=True)
 parser.add_argument('--direction','-d', choices=['GvH','HvG'], help='Direction(GvH or HvG)', required=True)
 
 args = parser.parse_args()
 
 loci = ["A","B","C","DRB1","DQB1"]
 
-data = pd.read_pickle("all_np.pickle")
+data = pd.read_pickle(args.input)
 data_np = data.to_numpy()
 
 loci_index = {"A":0,"B":1,"C":2,"DRB1":3,"DQB1":4}
@@ -66,7 +66,7 @@ threads = args.threads
 if threads > os.cpu_count():
     threads = int(round(os.cpu_count()*0.8,0))
 final = run(threads)
-with open(f'ouput_{args.direction}.npy', 'wb') as f:
+with open(f'{args.input.split(".")[0]}_{args.direction}.npy', 'wb') as f:
     np.save(f,final)
 
 #python3 3.main.py -t 25 -d GvH
