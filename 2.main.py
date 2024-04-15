@@ -35,13 +35,13 @@ def process(part):
                     print(f"{i+1}/{len(part)}", end="\r")
         return arr
 
-def run(n):  # Number of equal parts
-    partitions = list(zip(range(n),np.array_split(range(len(data_np)), n)))
+def run(n,choose):  # Number of equal parts
+    partitions = list(zip(range(n),np.array_split(data['source'].isin(choose).index, n)))
     p = Pool(processes=n)
-    data = p.map(process, partitions)
+    return_data = p.map(process, partitions)
     p.close()
     #data = [i for i in data if i is not None] 
-    return np.concatenate(data,axis=0)
+    return np.concatenate(return_data,axis=0)
 
 parser = argparse.ArgumentParser(
                     prog='ProgramName',
@@ -49,15 +49,16 @@ parser = argparse.ArgumentParser(
                     epilog='Text at the bottom of help')
 
 parser.add_argument('--threads','-t', type=int, help='Number of threads to use', required=True)
-parser.add_argument('--input','-i', type=str, help='Input file', required=True)
+parser.add_argument('--input','-i',default="all.pickle", type=str, help='Input file')
 parser.add_argument('--direction','-d', choices=['GvH','HvG'], help='Direction(GvH or HvG)', required=True)
+parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help='Direction(GvH or HvG)', required=True)
 
 args = parser.parse_args()
 
 loci = ["A","B","C","DRB1","DQB1"]
 
 data = pd.read_pickle(args.input)
-data_np = data.to_numpy()
+data_np = data.drop(columns=["ID","source"]).to_numpy()
 
 loci_index = {"A":0,"B":1,"C":2,"DRB1":3,"DQB1":4}
 loci_index_list = [loci_index[locus] for locus in loci]
@@ -65,9 +66,12 @@ loci_index_list = [loci_index[locus] for locus in loci]
 threads = args.threads
 if threads > os.cpu_count():
     threads = int(round(os.cpu_count()*0.8,0))
-final = run(threads)
-with open(f'{args.input.split(".")[0]}_{args.direction}.npy', 'wb') as f:
+if args.choose == "all":
+    choose = ["BMD","CBU"]
+else:
+    choose = [args.choose]
+final = run(threads,choose)
+with open(f'{args.choose}_{args.direction}.npy', 'wb') as f:
     np.save(f,final)
 
-#python3 3.main.py -t 25 -d GvH
-#python3 3.main.py -t 25 -d HvG
+#python3 2.main.py -t 25 -d HvG -c CBU
