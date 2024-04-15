@@ -6,8 +6,8 @@ parser = argparse.ArgumentParser(
                     description='What the program does',
                     epilog='Text at the bottom of help')
 
-parser.add_argument('--input','-i',default="all.pickle", type=str, help='input file')
-parser.add_argument('--output','-o',default="all_np.pickle", type=str, help='output file')
+parser.add_argument('--input','-i', type=str, help='input file',required=True)
+parser.add_argument('--output','-o', type=str, help='output file',required=True)
 args = parser.parse_args()
 
 data = pd.read_pickle(args.input)
