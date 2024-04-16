@@ -16,28 +16,25 @@ def percentage(choose,direction):
             if j in [2,4] and all['loci'][i] == 3:
                 full.append(None)
             else:
-                count = dict(sorted(Counter(sample[:,j]).items()))
-                count.pop(-1)
-                total_count = sum(count.values())
-                percentages = {key: value/total_count * 100 for key, value in count.items()}
-                full.append(percentages)
+                row = sample[:,j]
+                length = len(row)  - (row==-1).sum()
+                count  = {0:(row ==0).sum()*100/length,1:(row==1).sum()*100/length,2:(row ==2).sum()*100/length}
+                full.append(count)
 
         arr[i,0] = full
 
         #3 loci
-        count_3 = dict(sorted(Counter(np.concatenate(sample[:,[0,1,3]]).tolist()).items()))
-        count_3.pop(-1)
-        total_count_3 = sum(count_3.values())
-        percentages_3 = {key: value/total_count_3 * 100 for key, value in count_3.items()}
-        arr[i,1] = percentages_3
+        row = np.concatenate(sample[:,[0,1,3]])
+        length = len(row)  - (row==-1).sum()
+        count_3  = {0:(row ==0).sum()*100/length,1:(row==1).sum()*100/length,2:(row ==2).sum()*100/length}
+        arr[i,1] = count_3
         
         #5 loci
         if all['loci'][i] == 5:
-            count_5 = dict(sorted(Counter(np.concatenate(sample).tolist()).items()))
-            count_5.pop(-1)
-            total_count_5 = sum(count_5.values())
-            percentages_5 = {key: value/total_count_5 * 100 for key, value in count_5.items()}
-            arr[i,2] = percentages_5
+            row = np.concatenate(sample)
+            length = len(row) - (row==-1).sum()
+            count_5  = {0:(row ==0).sum()*100/length,1:(row==1).sum()*100/length,2:(row ==2).sum()*100/length}
+            arr[i,2] = count_5
         print(f"{i+1}/{len(data)}", end="\r")
     return arr
 
