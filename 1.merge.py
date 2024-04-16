@@ -1,4 +1,5 @@
 import pandas as pd
+import pickle
 
 def merge1(BMD_3, BMD_5,CBU_3,CBU_5):
     data_BMD_3 = pd.read_excel(BMD_3) #here we have to change column names according to the others
@@ -26,6 +27,8 @@ def merge2(data):
         for allele in alleles_locus:
             alleles_dict[locus][allele] = n
             n += 1
+    #with open("alleles_dict.pickle","wb") as f:
+    #    pickle.dump(alleles_dict, f)
 
     final = pd.DataFrame(data[["ID","source","loci"]])
     original = pd.DataFrame(data[["ID","source","loci"]])
@@ -37,7 +40,8 @@ def merge2(data):
     
 
     final.reset_index(drop=True).to_pickle("all.pickle")
-    original.set_index(original.columns[0]).to_pickle("all_original.pickle")
+    #original.set_index(original.columns[0]).to_pickle("all_original.pickle")
+    original.reset_index(drop=True).to_pickle("all_original.pickle")
 
 BMD_3 = "data/Greek_BMDs_2fields/76689gen_2_fields_BMDs_3loci_excl.blanks.xlsx"
 BMD_5 = "data/Greek_BMDs_2fields/70077gen_78716BMDs_2fields_5loci_excl.bl.xlsx"
