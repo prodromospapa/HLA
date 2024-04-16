@@ -4,7 +4,6 @@ import pandas as pd
 import argparse
 from collections import Counter
 
-a=1
 with open('all_original.pickle', 'rb') as f:
         data = np.load(f,allow_pickle=True)
 big_dic={}
