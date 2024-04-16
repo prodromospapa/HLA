@@ -9,8 +9,10 @@ def merge1(BMD_3, BMD_5,CBU_3,CBU_5):
     only_BMD_3 = data_BMD_3.loc[~data_BMD_3.index.isin(data_BMD_5.index)]
     only_CBU_3 = data_CBU_3.loc[~data_CBU_3.index.isin(data_CBU_5.index)]
     source = ["BMD"]*data_BMD_5.shape[0] + ["CBU"]*data_CBU_5.shape[0] + ["BMD"]*only_BMD_3.shape[0] + ["CBU"]*only_CBU_3.shape[0]
+    loci = [5]*(data_BMD_5.shape[0]+data_CBU_5.shape[0]) + [3]*(only_BMD_3.shape[0]+only_CBU_3.shape[0])
     merged_data = pd.concat([data_BMD_5,data_CBU_5,only_BMD_3,only_CBU_3,])
     merged_data["source"] = source
+    merged_data["loci"] = loci
     return merged_data
     
 def merge2(data):
@@ -25,8 +27,8 @@ def merge2(data):
             alleles_dict[locus][allele] = n
             n += 1
 
-    final = pd.DataFrame(data[["ID","source"]])
-    original = pd.DataFrame(data[["ID","source"]])
+    final = pd.DataFrame(data[["ID","source","loci"]])
+    original = pd.DataFrame(data[["ID","source","loci"]])
     for locus,alleles in loci_dict.items():
         final[locus] = data[loci_dict[locus]].apply(lambda x: set(sorted([alleles_dict[locus][i] for i in x if i in alleles_dict[locus]])), axis=1)
         original[locus] = data[loci_dict[locus]].apply(lambda x: set(sorted([i for i in x if i in alleles_dict[locus]])), axis=1)
