@@ -40,13 +40,14 @@ parser = argparse.ArgumentParser(
                     epilog='Text at the bottom of help')
 
 parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help='Direction(GvH or HvG)', required=True)
+parser.add_argument('--direction','-d', choices=['GvH','HvG'], help='Direction(GvH or HvG)', required=True)
 
 args = parser.parse_args()
 
 with open('all_original.pickle', 'rb') as f:
         genotypes = np.load(f,allow_pickle=True)
 
-with open('all_HvG.npy', 'rb') as f:
+with open(f'all_{args.direction}.npy', 'rb') as f:
         mm = np.load(f,allow_pickle=True)
 
 if args.choose in ['BMD','CBU']:
@@ -60,5 +61,5 @@ al_per = counter_genotype(genotypes)
 mm_per_df = pd.DataFrame(mm_per)
 al_per_df = pd.DataFrame(al_per).reindex(mm_per_df.index)
 
-mm_per_df.to_csv(f"{args.choose}_mm_per.csv")
-al_per_df.to_csv(f"{args.choose}_al_per.csv")
+mm_per_df.to_csv(f"{args.choose}_{args.direction}_mm_per.csv")
+al_per_df.to_csv(f"{args.choose}_{args.direction}_al_per.csv")
