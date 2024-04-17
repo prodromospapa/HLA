@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
 
-def bar(choose,loci):
-    with open(f'{choose}.npy', 'rb') as f:
+def bar(choose,loci,direction):
+    with open(f'{choose}_{direction}.npy', 'rb') as f:
         data = np.load(f,allow_pickle=True)
 
     all = pd.read_pickle("all.pickle")
@@ -25,8 +25,8 @@ def bar(choose,loci):
             y3 = row[2]
             plt.bar(x,y3,bottom=y2,color='g')
         print(f"{i+1}/{len(id)}",end="\r")
-    plt.title(f"{choose}_{loci}")
-    plt.savefig(f"{choose}_{loci}.png")
+    plt.title(f"{choose}_{direction}_{loci}")
+    plt.savefig(f"{choose}_{direction}_{loci}.png")
 
 parser = argparse.ArgumentParser(
                     prog='ProgramName',
@@ -35,7 +35,8 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help='Direction(GvH or HvG)', required=True)
 parser.add_argument('--loci','-l', choices=["A","B","C","DRB1","DQB1",'3','5'],type=str, help='', required=True)
+parser.add_argument('--direction','-d', choices=['GvH','HvG'], help='Direction(GvH or HvG)', required=True)
 
 args = parser.parse_args()
 
-bar(args.choose,args.loci)
+bar(args.choose,args.loci,args.direction)

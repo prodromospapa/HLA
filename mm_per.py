@@ -54,5 +54,5 @@ if args.choose == 'all':
 else:
     choose = [args.choose]
 
-with open(f'{args.choose}.npy', 'wb') as f:
+with open(f'{args.choose}_{args.direction}.npy', 'wb') as f:
     np.save(f,percentage(choose,args.direction))
