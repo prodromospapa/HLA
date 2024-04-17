@@ -37,8 +37,9 @@ def bar(choose,loci,direction):
     plt.axhline(mean(y1_total), color='blue')
     plt.axhline(mean(y2_total), color='red')
     plt.axhline(mean(y3_total), color='green')
+    plt.xticks([])
     plt.title(f"{choose}_{direction}_{loci}")
-    plt.savefig(f"{choose}_{direction}_{loci}.png")
+    plt.savefig(f"{choose}_{direction}_{loci}.png",dpi=300)
 
 parser = argparse.ArgumentParser(
                     prog='ProgramName',
