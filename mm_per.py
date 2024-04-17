@@ -6,7 +6,8 @@ from collections import Counter
 def percentage(choose,direction):
     f = open(f'all_{direction}.npy', 'rb')
     all = pd.read_pickle("all.pickle")
-    all = all[all['source'].isin(choose)].reset_index(drop=True)
+    if choose in ['BMD','CBU']:
+        all = all[all['source'] == choose].reset_index(drop=True)
     data = np.load(f)[all.index,:,:]
     arr = np.empty((len(data),3), dtype=list)
     for i,sample in enumerate(data):
@@ -49,10 +50,5 @@ parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help=
 
 args = parser.parse_args()
 
-if args.choose == 'all':
-    choose = ['BMD','CBU']
-else:
-    choose = [args.choose]
-
 with open(f'{args.choose}_{args.direction}.npy', 'wb') as f:
-    np.save(f,percentage(choose,args.direction))
+    np.save(f,percentage(args.choose,args.direction))

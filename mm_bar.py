@@ -33,8 +33,8 @@ parser = argparse.ArgumentParser(
                     description='What the program does',
                     epilog='Text at the bottom of help')
 
-parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help='Direction(GvH or HvG)', required=True)
-parser.add_argument('--loci','-l', choices=["A","B","C","DRB1","DQB1",'3','5'],type=str, help='', required=True)
+parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help='Sample origin', required=True)
+parser.add_argument('--loci','-l', choices=["A","B","C","DRB1","DQB1",'3','5'],type=str, help='Loci', required=True)
 parser.add_argument('--direction','-d', choices=['GvH','HvG'], help='Direction(GvH or HvG)', required=True)
 
 args = parser.parse_args()
