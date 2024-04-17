@@ -22,7 +22,11 @@ for base in ["A","B","C","DRB1","DQB1"]:
     for mm,color in enumerate(["blue","red","green"]):
         mm_list = [allele[mm] for allele in mm_per]
         plt.plot(mm_list,color=color)
-    plt.legend(["0","1","2"])
+    plt.bar(mm_per.index,al_per.tolist(),color="black",alpha=0.5)
+    plt.legend(["0","1","2","Allele Frequency"])
+    plt.rcParams['xtick.labelsize'] = 6
+    plt.xticks(range(len(mm_per)),mm_per.index,rotation=90)
     plt.title(f"{args.choose}_{args.direction}_{base}")
-    plt.savefig(f"{args.choose}_{args.direction}_{base}_sorted.png")
+    plt.tight_layout()
+    plt.savefig(f"{args.choose}_{args.direction}_{base}_sorted.png",dpi=300)
     plt.close()
