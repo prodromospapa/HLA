@@ -26,14 +26,12 @@ def counter_allele(data):
                                 else:
                                         for j in range(3):
                                                 final[base][allele][j] += (mm[i]==j).sum()
-                                print(f"{counter}/{len(data[base].index)*5*2}",end="\r")
+                                print(f"{counter}/{len(data[base].index)*5}",end="\r")
         for base in ["A","B","C","DRB1","DQB1"]:
-                counter+=1
                 for allele in final[base]:
                         total = sum(final[base][allele].values())
                         for k in final[base][allele]:
                                 final[base][allele][k] = final[base][allele][k]/total
-                        print(f"{counter}/{len(data[base].index)*5*2}",end="\r")
         return final
 
 parser = argparse.ArgumentParser(
