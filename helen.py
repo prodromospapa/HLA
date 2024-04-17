@@ -61,5 +61,7 @@ al_per = counter_genotype(genotypes)
 mm_per_df = pd.DataFrame(mm_per)
 al_per_df = pd.DataFrame(al_per).reindex(mm_per_df.index)
 
-mm_per_df.to_csv(f"{args.choose}_{args.direction}_mm_per.csv")
-al_per_df.to_csv(f"{args.choose}_{args.direction}_al_per.csv")
+with open(f"{args.choose}_{args.direction}_mm_per.pickle", 'wb') as f:
+        np.save(f, mm_per_df)
+with open(f"{args.choose}_{args.direction}_al_per.pickle", 'wb') as f:
+        np.save(f, al_per_df)
