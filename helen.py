@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
 from collections import Counter
@@ -8,8 +7,8 @@ from collections import Counter
 def counter_genotype(data):
         big_dic={}
         for loci in ["A","B","C","DRB1","DQB1"]:
-                loci_list=data[loci].tolist()         
-                loci_dict = Counter([j for i in loci_list for j in i ])
+                loci_list=[j for i in data[loci].tolist() for j in i]
+                loci_dict = Counter(loci_list)
                 loci_dict = {k:v/len(loci_list) for k,v in loci_dict.items()}
                 big_dic[loci]=loci_dict
         return big_dic
@@ -37,17 +36,31 @@ def counter_allele(data):
                         print(f"{counter}/{len(data[base].index)*5*2}",end="\r")
         return final
 
+parser = argparse.ArgumentParser(
+                    prog='ProgramName',
+                    description='What the program does',
+                    epilog='Text at the bottom of help')
+
+parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help='Direction(GvH or HvG)', required=True)
+
+args = parser.parse_args()
+
 with open('all_original.pickle', 'rb') as f:
         genotypes = np.load(f,allow_pickle=True)
 
 with open('all_HvG.npy', 'rb') as f:
         mm = np.load(f,allow_pickle=True)
 
-big_dic = counter_genotype(genotypes)
+if args.choose in ['BMD','CBU']:
+        source = genotypes[genotypes['source']==args.choose]
+else:
+        source = genotypes
 
-source = genotypes[genotypes['source']=='CBU']
-final = counter_allele(source)
+mm_per = counter_allele(source)
+al_per = counter_genotype(genotypes)
 
-df = pd.DataFrame(final)
-pd.DataFrame(big_dic).reindex(df.index)
+mm_per_df = pd.DataFrame(mm_per)
+al_per_df = pd.DataFrame(al_per).reindex(mm_per_df.index)
 
+mm_per_df.to_csv(f"{args.choose}_mm_per.csv")
+al_per_df.to_csv(f"{args.choose}_al_per.csv")

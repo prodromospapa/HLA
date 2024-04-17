@@ -8,7 +8,8 @@ def bar(choose,loci):
         data = np.load(f,allow_pickle=True)
 
     all = pd.read_pickle("all.pickle")
-    all = all[all['source']== choose].reset_index(drop=True)
+    if choose in ['BMD','CBU']:
+        all = all[all['source']== choose].reset_index(drop=True)
     id = all["ID"].tolist()
     loci_dict = {"A":0,"B":1,"C":2,"DRB1":3,"DQB1":4,'3':1,'5': 2}
     for i,x in enumerate(id):
