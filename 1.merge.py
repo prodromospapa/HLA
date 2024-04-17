@@ -27,8 +27,6 @@ def merge2(data):
         for allele in alleles_locus:
             alleles_dict[locus][allele] = n
             n += 1
-    #with open("alleles_dict.pickle","wb") as f:
-    #    pickle.dump(alleles_dict, f)
 
     final = pd.DataFrame(data[["ID","source","loci"]])
     original = pd.DataFrame(data[["ID","source","loci"]])
@@ -40,7 +38,6 @@ def merge2(data):
     
 
     final.reset_index(drop=True).to_pickle("all.pickle")
-    #original.set_index(original.columns[0]).to_pickle("all_original.pickle")
     original.reset_index(drop=True).to_pickle("all_original.pickle")
 
 BMD_3 = "data/Greek_BMDs_2fields/76689gen_2_fields_BMDs_3loci_excl.blanks.xlsx"
