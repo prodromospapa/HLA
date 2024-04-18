@@ -50,7 +50,7 @@ args = parser.parse_args()
 
 loci = ["A","B","C","DRB1","DQB1"]
 
-data = pd.read_pickle(args.input).iloc[:100]
+data = pd.read_pickle(args.input)
 loci_list = data["loci"].tolist()
 id = data["ID"].tolist()
 data_np = data.drop(columns=["ID","source","loci"]).to_numpy()
