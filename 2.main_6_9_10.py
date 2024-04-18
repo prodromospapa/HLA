@@ -64,4 +64,4 @@ if threads > os.cpu_count():
 final = run(threads)
 final.to_pickle("final_6_9_10.pickle")
 
-#python3 2.main.py -t 25 -d HvG
+#python3 2.main_6_9_10.py -t 25
