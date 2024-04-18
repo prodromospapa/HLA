@@ -69,4 +69,4 @@ final = run(threads)
 with open(f'all_{args.direction}.npy', 'wb') as f:
     np.save(f,final)
 
-#python3 2.main.py -t 25 -d HvG -c CBU
+#python3 2.main.py -t 25 -d HvG

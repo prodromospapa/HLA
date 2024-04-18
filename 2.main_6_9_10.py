@@ -49,7 +49,6 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--threads','-t', type=int, help='Number of threads to use')
 parser.add_argument('--input','-i', type=str, help='Input file') #data/Greek_BMDs_2fields/70077gen_78716BMDs_2fields_5loci_excl.bl.xlsx
 parser.add_argument('--loci','-l', type=str, help='Loci to include')
-parser.add_argument('--nine','-n', action='store_true', help='DQB1 9/10')
 
 args = parser.parse_args()
 
