@@ -30,3 +30,5 @@ for base in ["A","B","C","DRB1","DQB1"]:
     plt.tight_layout()
     plt.savefig(f"{args.choose}_{args.direction}_{base}_sorted.png",dpi=300)
     plt.close()
+
+#python3 helen_graph.py -c CBU -d HvG

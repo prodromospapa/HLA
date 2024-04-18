@@ -63,3 +63,5 @@ al_per_df = pd.DataFrame(al_per).reindex(mm_per_df.index)
 
 mm_per_df.to_pickle(f"{args.choose}_{args.direction}_mm_per.pickle")
 al_per_df.to_pickle(f"{args.choose}_{args.direction}_al_per.pickle")
+
+#python3 helen.py -c CBU -d HvG
