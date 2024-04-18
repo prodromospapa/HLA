@@ -17,9 +17,9 @@ def process(part):
     part = list(part[1])
     if part:
         arr = np.ones((len(part), len(data_np), len(loci_index_list)), dtype=np.int8)
+        counter = 0
         for i, row_index in enumerate(part):
             row = data_np[row_index]
-            counter = 0
             for j, itter_row in enumerate(data_np):
                 arr_row = np.empty(len(loci_index_list), dtype=np.int8)
                 counter += 1
@@ -40,7 +40,6 @@ def run(n):  # Number of equal parts
     p = Pool(processes=n)
     return_data = p.map(process, partitions)
     p.close()
-    #data = [i for i in data if i is not None] 
     return np.concatenate(return_data,axis=0)
 
 parser = argparse.ArgumentParser(

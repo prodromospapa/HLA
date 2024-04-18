@@ -1,73 +1,67 @@
-import pandas as pd
 from multiprocessing import Pool
 import numpy as np
 import argparse
+import pandas as pd
+import os
 
 def process(part):
     n = part[0]
-    part = part[1]
-    df = pd.DataFrame(columns=loci,index=id)
-    if args.nine:
-        df['DQB1_9/10'] = ""
-    df = df.apply(lambda x: x.apply(lambda _: []))
-    for row_index in part:
-        row = data_np[row_index][1:]
-        row_name = id[row_index]
-        for row_total in data_np:
-            counter = 0
-            row_total_name = id[row_total[0]]
-            row_total = row_total[1:]
-            for locus in loci:
-                locus_index = loci_index[locus]
-                genotype = row[locus_index]             
-                if row_total_name == row_name:
-                    continue
-                elif not genotype:
-                   continue
-                if (genotype[0] in row_total[locus_index]) and (genotype[1] in row_total[locus_index]): #(normal == row_total[locus]) or (reversed == row_total[locus]): # If the locus is heterozygous
-                    counter+=1
-                    df.at[row_name,locus].append(row_total_name)
-                elif genotype[0] == genotype[1] and genotype[0] in row_total[locus_index]: # If the locus is homozygous
-                    counter+=1
-                    df.at[row_name,locus].append(row_total_name)
-        if n==1:
-            print(f"{row_index+1}/{len(part)}",end="\r")
-    return df
+    part = list(part[1])
+    if part:
+        df = pd.DataFrame(columns=["6/6","9/10","10/10"],index=id)
+        df = df.apply(lambda x: x.apply(lambda _: []))
+        counter = 0
+        for i, row_index in enumerate(part):
+            row = data_np[row_index]
+            for j, itter_row in enumerate(data_np):
+                counter += 1
+                if row_index != j:
+                    row_loci = loci_list[row_index]
+                    itter_loci = loci_list[j]
+                    if row_loci == itter_loci:
+                        if row_loci == 3 and (row==itter_row).all():
+                            df.at[id[row_index],"6/6"].append(id[j])
+                        if row_loci == 5:
+                            if (row[:4]==itter_row[:4]).all():
+                                if (row[4]==itter_row[4]):
+                                    df.at[id[row_index],"10/10"].append(id[j])
+                                elif len(row[4]-itter_row[4]) == 1:
+                                    df.at[id[row_index],"9/10"].append(id[j])                
+                if n == 0:
+                    print(f"{i+1}/{len(part)}", end="\r")
+        return df
 
 def run(n):  # Number of equal parts
-    partitions = list(zip(range(1,n+1),np.array_split(range(len(data_np)), n)))
+    partitions = list(zip(range(n),np.array_split(data.index, n)))
     p = Pool(processes=n)
-    data = p.map(process, partitions)
+    return_data = p.map(process, partitions)
     p.close()
-    return pd.concat(data)
+    return pd.concat(return_data)
 
 parser = argparse.ArgumentParser(
                     prog='ProgramName',
                     description='What the program does',
                     epilog='Text at the bottom of help')
 
-parser.add_argument('--threads','-t', type=int, help='Number of threads to use')
-parser.add_argument('--input','-i', type=str, help='Input file') #data/Greek_BMDs_2fields/70077gen_78716BMDs_2fields_5loci_excl.bl.xlsx
-parser.add_argument('--loci','-l', type=str, help='Loci to include')
+parser.add_argument('--threads','-t', type=int, help='Number of threads to use', required=True)
+parser.add_argument('--input','-i',default="all.pickle", type=str, help='Input file')
 
 args = parser.parse_args()
 
-if "," not in args.loci:
-    loci = [args.loci]  # loci are passed as command line arguments, ["A","B", "C", "DRB1", "DQB1", "DPB1"]
-else:
-    loci = args.loci.split(",")
-    loci = [i.strip() or i for i in loci]
+loci = ["A","B","C","DRB1","DQB1"]
 
-if len(loci) != 5 and args.nine:
-    print("DQB1 9/10 can only be used with 5 loci")
-    exit()
-
-data = pd.read_pickle("all.pickle")
+data = pd.read_pickle(args.input).iloc[:100]
+loci_list = data["loci"].tolist()
 id = data["ID"].tolist()
-data = data.drop(columns=["ID"])
-data[["A","B","C","DRB1","DQB1"]] = data[["A","B","C","DRB1","DQB1"]].map(eval)
-data_np = data.to_numpy()
-loci_index = {"A":0,"B":1,"C":2,"DRB1":3,"DQB1":4}
+data_np = data.drop(columns=["ID","source","loci"]).to_numpy()
 
-run(args.threads).to_pickle("output_np_merge.pickle")#.to_csv("output_np_merge_t.csv")
-#python3 hom_all_par_np_merge.py -t 25 -i all_np.csv -l "A,B,C,DRB1,DQB1" -n
+loci_index = {"A":0,"B":1,"C":2,"DRB1":3,"DQB1":4}
+loci_index_list = [loci_index[locus] for locus in loci]
+
+threads = args.threads
+if threads > os.cpu_count():
+    threads = int(round(os.cpu_count()*0.8,0))
+final = run(threads)
+final.to_pickle("final_6_9_10.pickle")
+
+#python3 2.main.py -t 25 -d HvG
