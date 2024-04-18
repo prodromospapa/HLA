@@ -1,11 +1,11 @@
 import pandas as pd
 import pickle
 
-def merge1(BMD_3, BMD_5,CBU_3,CBU_5):
+def merge1(BMD_3, BMD_5,CBU_3,CBU_5,no_D,no_D_elidek,elidek):
     data_BMD_3 = pd.read_excel(BMD_3) #here we have to change column names according to the others
     data_BMD_5 = pd.read_excel(BMD_5)
-    data_CBU_3 = pd.read_excel(CBU_3).drop(columns=["BIRTH"])
-    data_CBU_5 = pd.read_excel(CBU_5).drop(columns=["BIRTH"])
+    data_CBU_3 = pd.read_excel(CBU_3)
+    data_CBU_5 = pd.read_excel(CBU_5)
 
     only_BMD_3 = data_BMD_3.loc[~data_BMD_3.index.isin(data_BMD_5.index)]
     only_CBU_3 = data_CBU_3.loc[~data_CBU_3.index.isin(data_CBU_5.index)]
@@ -14,6 +14,11 @@ def merge1(BMD_3, BMD_5,CBU_3,CBU_5):
     merged_data = pd.concat([data_BMD_5,data_CBU_5,only_BMD_3,only_CBU_3,])
     merged_data["source"] = source
     merged_data["loci"] = loci
+    if elidek:
+        correct_id = pd.read_excel(no_D_elidek)["ID"]
+    else:
+        correct_id = pd.read_excel(no_D)['ID']
+    merged_data = merged_data[merged_data["ID"].isin(correct_id)]
     return merged_data
     
 def merge2(data):
@@ -40,12 +45,15 @@ def merge2(data):
     final.reset_index(drop=True).to_pickle("all.pickle")
     original.reset_index(drop=True).to_pickle("all_original.pickle")
 
-BMD_3 = "data/Greek_BMDs_2fields/76689gen_2_fields_BMDs_3loci_excl.blanks.xlsx"
-BMD_5 = "data/Greek_BMDs_2fields/70077gen_78716BMDs_2fields_5loci_excl.bl.xlsx"
-CBU_3 = "data/Greek_CBUs_2fields/3012gen_2field_CBUs_3loci_excl.bl.xlsx"
-CBU_5 = "data/Greek_CBUs_2fields/1092gen_2fields_CBUs_5loci_excl.bl.xlsx"
+BMD_3 = "data/3_loci/75599_2_fields_77785BMDs_3loci_excl.blanks050424.xlsx"
+BMD_5 = "data/5_loci/69130_Greek77785BMDs_2fields_5loci_final050424.xlsx"
+CBU_3 = "data/3_loci/3012_2field_3019CBUs_3loci_excl.bl_haplomat.xlsx"
+CBU_5 = "data/5_loci/1092_2fields_CBUs_5loci_excl.bl.xlsx"
+no_D = "data/Extra_Analyses_Greek_CBUs_BMDs_80804_noD_no124.xlsx"
+no_D_elidek = "data/ΕΛΙΔΕΚ_GREEK_CBUs_BMDs_80706_noD_no124.xlsx"
 
 
-data = merge1(BMD_3, BMD_5,CBU_3,CBU_5)
+
+data = merge1(BMD_3, BMD_5,CBU_3,CBU_5,no_D,no_D_elidek,elidek=False)#,elidek=False)
 merge2(data)
 
