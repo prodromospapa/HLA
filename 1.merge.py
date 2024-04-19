@@ -56,4 +56,3 @@ no_D_elidek = "data/ΕΛΙΔΕΚ_GREEK_CBUs_BMDs_80706_noD_no124.xlsx"
 
 data = merge1(BMD_3, BMD_5,CBU_3,CBU_5,no_D,no_D_elidek,elidek=False)
 merge2(data)
-
