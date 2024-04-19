@@ -56,7 +56,7 @@ args = parser.parse_args()
 loci = ["A","B","C","DRB1","DQB1"]
 
 data = pd.read_pickle(args.input)
-data_np = data.drop(columns=["ID","source","loci"]).to_numpy()
+data_np = data[loci].to_numpy()
 
 loci_index = {"A":0,"B":1,"C":2,"DRB1":3,"DQB1":4}
 loci_index_list = [loci_index[locus] for locus in loci]

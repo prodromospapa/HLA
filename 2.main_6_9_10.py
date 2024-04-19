@@ -19,13 +19,13 @@ def process(part):
                     row_loci = loci_list[row_index]
                     itter_loci = loci_list[j]
                     if row_loci == 3 and (row==itter_row).all():
-                        df.at[id[row_index],"6/6"]+=id[j]
+                        df.at[id[row_index],"6/6"]+=[id[j]]
                     elif row_loci == 5:
                         if (row[:4]==itter_row[:4]).all():
                             if (row[4]==itter_row[4]):
-                                df.at[id[row_index],"10/10"] += id[j]
+                                df.at[id[row_index],"10/10"] += [id[j]]
                             elif len(row[4]-itter_row[4]) == 1:
-                                df.at[id[row_index],"9/10"] += id[j]
+                                df.at[id[row_index],"9/10"] += [id[j]]
                 if n == 0:
                     print(f"{i+1}/{len(part)}", end="\r")
         return df
@@ -52,8 +52,7 @@ loci = ["A","B","C","DRB1","DQB1"]
 data = pd.read_pickle(args.input)
 loci_list = data["loci"].tolist()
 id = data["ID"].tolist()
-data_np = data.drop(columns=["ID","source","loci"]).to_numpy()
-
+data_np = data[loci].to_numpy()
 loci_index = {"A":0,"B":1,"C":2,"DRB1":3,"DQB1":4}
 loci_index_list = [loci_index[locus] for locus in loci]
 

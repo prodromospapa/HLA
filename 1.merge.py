@@ -1,5 +1,4 @@
 import pandas as pd
-import pickle
 
 def merge1(BMD_3, BMD_5,CBU_3,CBU_5,no_D,no_D_elidek,elidek):
     data_BMD_3 = pd.read_excel(BMD_3) #here we have to change column names according to the others
@@ -15,10 +14,13 @@ def merge1(BMD_3, BMD_5,CBU_3,CBU_5,no_D,no_D_elidek,elidek):
     merged_data["source"] = source
     merged_data["loci"] = loci
     if elidek:
-        correct_id = pd.read_excel(no_D_elidek)["ID"]
+        df = pd.read_excel(no_D_elidek)
+        correct = df[["ID","GENERATION"]]
     else:
-        correct_id = pd.read_excel(no_D)['ID']
-    merged_data = merged_data[merged_data["ID"].isin(correct_id)]
+        df = pd.read_excel(no_D)
+        correct = df[["ID","GENERATION"]]
+    merged_data = merged_data[merged_data["ID"].isin(correct["ID"])]
+    merged_data["GENERATION"] = correct[correct["ID"].isin(merged_data["ID"])]["GENERATION"]
     return merged_data
     
 def merge2(data):
