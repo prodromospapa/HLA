@@ -35,7 +35,7 @@ for ranking in [[1,0.1],[0.1,0.05],[0.05,0]]:
                 plt.savefig(f"{args.choose}_{args.direction}_ranking_{ranking[0]}_{ranking[1]}.png",dpi=300)
                 plt.close()
         else:
-                print(f"{ranking}: zeros: {zeros}, ones: {ones}, twos: {twos}")
+                print(f"{ranking}: zeros: {mean(zeros)}, ones: {mean(ones)}, twos: {mean(twos)}")
 
 
 #python3 helen_ranking.py -c CBU -d HvG
