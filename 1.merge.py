@@ -1,28 +1,54 @@
 import pandas as pd
+import numpy as np
+from multiprocessing import Pool
+import argparse
 
-def merge1(BMD_3, BMD_5,CBU_3,CBU_5,no_D,no_D_elidek,elidek):
-    data_BMD_3 = pd.read_excel(BMD_3) #here we have to change column names according to the others
-    data_BMD_5 = pd.read_excel(BMD_5)
-    data_CBU_3 = pd.read_excel(CBU_3)
-    data_CBU_5 = pd.read_excel(CBU_5)
+def merge1(part):
+    n = part[0]
+    part = list(part[1])
+    if part:
+        final = pd.DataFrame()
+        counter = 0
+        final_dict = {"ID":[],"type":[],"loci":[],"generation":[],"A1":[],"A2":[],"B1":[],"B2":[],"C1":[],"C2":[],"DRB1_1":[],"DRB1_2":[],"DQB1_1":[],"DQB1_2":[]}
+        for index,row in data.iloc[part].iterrows():
+            counter+=1
+            loci_3 = ['A1', 'A2', 'B1', 'B2', 'DRB1_1', 'DRB1_2']
+            loci_5 = ['C1', 'C2', 'DQB1_1', 'DQB1_2']
+            if all(row[loci_3].notna()):
+                if any(row[loci_5].isna()):
+                    final_dict["loci"].append(3)
+                    for locus in loci_3+loci_5:
+                        try:
+                            value = ":".join(row[locus].split(":")[:2])
+                            final_dict[locus].append(value)
+                        except Exception:
+                            final_dict[locus].append(np.nan)
+                elif all(row[loci_5].notna()):
+                    final_dict["loci"].append(5)
+                    for locus in loci_3+loci_5:
+                        value = ":".join(row[locus].split(":")[:2])
+                        final_dict[locus].append(value)
+                else:
+                    continue
 
-    only_BMD_3 = data_BMD_3.loc[~data_BMD_3.index.isin(data_BMD_5.index)]
-    only_CBU_3 = data_CBU_3.loc[~data_CBU_3.index.isin(data_CBU_5.index)]
-    source = ["BMD"]*data_BMD_5.shape[0] + ["CBU"]*data_CBU_5.shape[0] + ["BMD"]*only_BMD_3.shape[0] + ["CBU"]*only_CBU_3.shape[0]
-    loci = [5]*(data_BMD_5.shape[0]+data_CBU_5.shape[0]) + [3]*(only_BMD_3.shape[0]+only_CBU_3.shape[0])
-    merged_data = pd.concat([data_BMD_5,data_CBU_5,only_BMD_3,only_CBU_3,])
-    merged_data["source"] = source
-    merged_data["loci"] = loci
-    if elidek:
-        df = pd.read_excel(no_D_elidek)
-        correct = df[["ID","GENERATION"]]
-    else:
-        df = pd.read_excel(no_D)
-        correct = df[["ID","GENERATION"]]
-    merged_data = merged_data[merged_data["ID"].isin(correct["ID"])]
-    merged_data["GENERATION"] = correct[correct["ID"].isin(merged_data["ID"])]["GENERATION"]
-    return merged_data
-    
+                final_dict["ID"].append(row["ID"])
+                final_dict["generation"].append(row["GENERATION"])
+                if row['TYPE'] == 'MD':
+                    final_dict["type"].append('BMD')
+                else:
+                    final_dict["type"].append('CBU')
+                    
+            if n == 0:
+                print(f"{counter}/{len(part)}",end="\r")
+        return pd.DataFrame(final_dict)
+
+def run(n):  # Number of equal parts
+    partitions = list(zip(range(n),np.array_split(data.index, n)))
+    p = Pool(processes=n)
+    return_data = p.map(merge1, partitions)
+    p.close()
+    return pd.concat(return_data)
+
 def merge2(data):
     loci_dict = {"A":["A1","A2"],"B":["B1","B2"],"C":["C1","C2"],"DRB1":["DRB1_1","DRB1_2"],"DQB1":["DQB1_1","DQB1_2"]}
 
@@ -35,26 +61,26 @@ def merge2(data):
             alleles_dict[locus][allele] = n
             n += 1
 
-    final = pd.DataFrame(data[["ID","source","loci"]])
-    original = pd.DataFrame(data[["ID","source","loci"]])
+    final = pd.DataFrame(data[["ID","type","loci",'generation']])
+    original = pd.DataFrame(data[["ID","type","loci",'generation']])
     for locus,alleles in loci_dict.items():
         final[locus] = data[loci_dict[locus]].apply(lambda x: set(sorted([alleles_dict[locus][i] for i in x if i in alleles_dict[locus]])), axis=1)
-        original[locus] = data[loci_dict[locus]].apply(lambda x: set(sorted([i for i in x if i in alleles_dict[locus]])), axis=1)
-        #final[alleles[0]] = data[alleles[0]].apply(lambda x: alleles_dict[locus][x] if x in alleles_dict[locus] else 0)
-        #final[alleles[1]] = data[alleles[1]].apply(lambda x: alleles_dict[locus][x] if x in alleles_dict[locus] else 0)
-    
-
     final.reset_index(drop=True).to_pickle("all.pickle")
     original.reset_index(drop=True).to_pickle("all_original.pickle")
 
-BMD_3 = "data/3_loci/75599_2_fields_77785BMDs_3loci_excl.blanks050424.xlsx"
-BMD_5 = "data/5_loci/69130_Greek77785BMDs_2fields_5loci_final050424.xlsx"
-CBU_3 = "data/3_loci/3012_2field_3019CBUs_3loci_excl.bl_haplomat.xlsx"
-CBU_5 = "data/5_loci/1092_2fields_CBUs_5loci_excl.bl.xlsx"
-no_D = "data/Extra_Analyses_Greek_CBUs_BMDs_80804_noD_no124.xlsx"
-no_D_elidek = "data/ΕΛΙΔΕΚ_GREEK_CBUs_BMDs_80706_noD_no124.xlsx"
+parser = argparse.ArgumentParser(
+                    prog='ProgramName',
+                    description='What the program does',
+                    epilog='Text at the bottom of help')
+
+parser.add_argument('--threads','-t', type=int, help='Number of threads to use', required=True)
+
+args = parser.parse_args()
 
 
+file = "data/Extra_Analyses_Greek_CBUs_BMDs_80804_noD_no124.xlsx"
+data = pd.read_excel(file)[['ID','TYPE','GENERATION','A1_GROUPED','A2_GROUPED','B1_GROUPED','B2_GROUPED','C1_GROUPED','C2_GROUPED','DRB1_1_GROUPED','DRB1_2_GROUPED','DQB1_1_GROUPED','DQB1_2_GROUPED']]
+data.columns = ['ID',"TYPE",'GENERATION','A1','A2','B1','B2','C1','C2','DRB1_1','DRB1_2','DQB1_1','DQB1_2']
 
-data = merge1(BMD_3, BMD_5,CBU_3,CBU_5,no_D,no_D_elidek,elidek=False)
-merge2(data)
+final = run(args.threads)
+merge2(final)

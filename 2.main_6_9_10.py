@@ -17,17 +17,16 @@ def process(part):
                 counter += 1
                 if row_index != j:
                     row_loci = loci_list[row_index]
-                    itter_loci = loci_list[j]
                     if row_loci == 3 and (row==itter_row).all():
-                        df.at[id[row_index],"6/6"]+=[id[j]]
+                        df.loc[id[row_index],"6/6"]+=[id[j]]
                     elif row_loci == 5:
                         if (row[:4]==itter_row[:4]).all():
                             if (row[4]==itter_row[4]):
-                                df.at[id[row_index],"10/10"] += [id[j]]
+                                df.loc[id[row_index],"10/10"] += [id[j]]
                             elif len(row[4]-itter_row[4]) == 1:
-                                df.at[id[row_index],"9/10"] += [id[j]]
+                                df.loc[id[row_index],"9/10"] += [id[j]]
                 if n == 0:
-                    print(f"{i+1}/{len(part)}", end="\r")
+                    print(f"{i+1}/{len(part)}", end="\r") 
         return df
 
 def run(n):  # Number of equal parts

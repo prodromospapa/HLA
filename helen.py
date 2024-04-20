@@ -51,11 +51,11 @@ with open(f'all_{args.direction}.npy', 'rb') as f:
         mm = np.load(f,allow_pickle=True)
 
 if args.choose in ['BMD','CBU']:
-        source = genotypes[genotypes['source']==args.choose]
+        type = genotypes[genotypes['type']==args.choose]
 else:
-        source = genotypes
+        type = genotypes
 
-mm_per = counter_allele(source)
+mm_per = counter_allele(type)
 al_per = counter_genotype(genotypes)
 
 mm_per_df = pd.DataFrame(mm_per)
