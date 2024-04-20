@@ -64,8 +64,8 @@ def merge2(data):
     final = pd.DataFrame(data[["ID","type","loci",'generation']])
     original = pd.DataFrame(data[["ID","type","loci",'generation']])
     for locus in loci_dict.keys():
-        final[locus] = data[loci_dict[locus]].apply(lambda x: sorted(set([alleles_dict[locus][i] for i in x if i in alleles_dict[locus]])), axis=1)
-        original[locus] = data[loci_dict[locus]].apply(lambda x: sorted(set([i for i in x if i in alleles_dict[locus]])), axis=1)
+        final[locus] = data[loci_dict[locus]].apply(lambda x: set(sorted([alleles_dict[locus][i] for i in x if i in alleles_dict[locus]])), axis=1)
+        original[locus] = data[loci_dict[locus]].apply(lambda x: set(sorted([i for i in x if i in alleles_dict[locus]])), axis=1)
     print(final)
     final.reset_index(drop=True).to_pickle("all.pickle")
     original.reset_index(drop=True).to_pickle("all_original.pickle")
