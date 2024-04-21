@@ -43,5 +43,5 @@ def ranking_plot(plot,ranking_list):
 
 ranking_plot(args.plot,eval(args.ranking))
 
-#python3 helen_ranking_total.py -c CBU -d HvG -p True -s value -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
-#python3 helen_ranking_total.py -c CBU -d HvG -p True -s name -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
+#python3 helen_ranking_total.py -c CBU -d HvG -p True -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
+#python3 helen_ranking_total.py -c CBU -d HvG -p True -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
