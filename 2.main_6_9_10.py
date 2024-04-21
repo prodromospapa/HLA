@@ -17,7 +17,7 @@ def process(part):
                 counter += 1
                 if row_index != j:
                     row_loci = loci_list[row_index]
-                    if row_loci == 3 and (row==itter_row).all():
+                    if row_loci == 3 and (row[["A","B","DRB1"]]==itter_row[["A","B","DRB1"]]).all():
                         df.loc[id[row_index],"6/6"]+=[id[j]]
                     elif row_loci == 5:
                         if (row[:4]==itter_row[:4]).all():

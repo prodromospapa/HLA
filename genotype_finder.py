@@ -13,15 +13,14 @@ parser.add_argument('--number','-n', type=str, help='',required=False)
 args = parser.parse_args()
 
 df = pd.read_pickle('all_original.pickle')
-data = dd.from_pandas(df, npartitions=1)
+data = dd.from_pandas(df, npartitions=5)
 if args.id:
     if "," not in args.id:
         id = [args.id]  # loci are passed as command line arguments, ["A","B", "C", "DRB1", "DQB1", "DPB1"]
     else:
         id = args.id.split(",")
         id = [i.strip() for i in id]
-        
-    print(data.loc[id].head(len(id)))
+    print(data[data["ID"].isin(id)].head(len(id)))
 
 elif args.number:
     if "," not in args.number:
@@ -29,7 +28,7 @@ elif args.number:
     else:
         n = args.number.split(",")
         n = [int(i.strip()) for i in n]
-    print(data.loc[df.index[n]].head(len(n)))
+    print(data.loc[n,:].head(len(n)))
 
 # python3 genotype_finder.py -i "CBMDP-0000511,CBMDP-0000512"
 # python3 genotype_finder.py -n '10,11'
