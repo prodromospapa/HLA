@@ -8,7 +8,7 @@ def process(part):
     n = part[0]
     part = list(part[1])
     if part:
-        df = pd.DataFrame(columns=["6/6","9/10","10/10"],index=id)
+        df = pd.DataFrame(columns=["6/6","9/10","10/10"],index=id[part[0]:part[-1]+1])
         df = df.apply(lambda x: x.apply(lambda _: []))
         counter = 0
         for i, row_index in enumerate(part):
@@ -17,14 +17,14 @@ def process(part):
                 counter += 1
                 if row_index != j:
                     row_loci = loci_list[row_index]
-                    if row_loci == 3 and (row[["A","B","DRB1"]]==itter_row[["A","B","DRB1"]]).all():
-                        df.loc[id[row_index],"6/6"]+=[id[j]]
+                    if row_loci == 3 and (row[[0,1,3]]==itter_row[[0,1,3]]).all():
+                        df.at[id[row_index],"6/6"].append(id[j])
                     elif row_loci == 5:
                         if (row[:4]==itter_row[:4]).all():
                             if (row[4]==itter_row[4]):
-                                df.loc[id[row_index],"10/10"] += [id[j]]
+                                df.at[id[row_index],"10/10"].append(id[j])
                             elif len(row[4]-itter_row[4]) == 1:
-                                df.loc[id[row_index],"9/10"] += [id[j]]
+                                df.at[id[row_index],"9/10"].append(id[j])
                 if n == 0:
                     print(f"{i+1}/{len(part)}", end="\r") 
         return df
