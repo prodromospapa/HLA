@@ -10,9 +10,9 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help='Direction(GvH or HvG)', required=True)
 parser.add_argument('--direction','-d', choices=['GvH','HvG'], help='Direction(GvH or HvG)', required=True)
-parser.add_argument('--plot','-p', action='store_true', help='Return plot', required=True)
+parser.add_argument('--plot','-p', action='store_true', help='Return plot')
 parser.add_argument('--ranking','-r', help='Dictionary with ranking (e.g. [[1,0.1],[0.1,0.05]])', required=True,type=str)
-parser.add_argument('--sort','-s', choices=['value','name'], help='Sort by value or name', required=True)
+parser.add_argument('--sort','-s', choices=['value','name'], help='Sort by value or name')
 
 args = parser.parse_args()
 
@@ -70,5 +70,5 @@ ranking_plot(args.plot,eval(args.ranking),args.sort)
 #python3 helen_ranking_alleles.py -c CBU -d HvG -p -s value -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
 #python3 helen_ranking_alleles.py -c CBU -d HvG -p -s name -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
 
-#python3 helen_ranking_alleles.py -c CBU -d HvG -s value -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
-#python3 helen_ranking_alleles.py -c CBU -d HvG -s name -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
+#python3 helen_ranking_alleles.py -c CBU -d HvG -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
+#python3 helen_ranking_alleles.py -c CBU -d HvG -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]

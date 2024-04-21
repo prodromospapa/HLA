@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help='Direction(GvH or HvG)', required=True)
 parser.add_argument('--direction','-d', choices=['GvH','HvG'], help='Direction(GvH or HvG)', required=True)
 parser.add_argument('--ranking','-r', help='Dictionary with ranking (e.g. [[1,0.1],[0.1,0.05]])', required=True,type=str)
-parser.add_argument('--plot','-p', action="store_true", help='Return plot', required=True)
+parser.add_argument('--plot','-p', action="store_true", help='Return plot')
 
 args = parser.parse_args()
 
