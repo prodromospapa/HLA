@@ -10,9 +10,9 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help='Direction(GvH or HvG)', required=True)
 parser.add_argument('--direction','-d', choices=['GvH','HvG'], help='Direction(GvH or HvG)', required=True)
-parser.add_argument('--plot','-p', choices=['True','False'], help='Return plot', required=True)
+parser.add_argument('--plot','-p', action='store_true', help='Return plot', required=True)
 parser.add_argument('--ranking','-r', help='Dictionary with ranking (e.g. [[1,0.1],[0.1,0.05]])', required=True,type=str)
-parser.add_argument('--sort','-s', choices=['value','name'], help='Sort by value or name', required=False)
+parser.add_argument('--sort','-s', choices=['value','name'], help='Sort by value or name', required=True)
 
 args = parser.parse_args()
 
@@ -23,8 +23,8 @@ mm_per = mm_per_df
 al_per = al_per_df.reindex(mm_per.index)
 
 
-def ranking_plot(plot,ranking,sort):
-        for ranking in ranking:
+def ranking_plot(plot,ranking_list,sort):
+        for ranking in ranking_list:
                 ranking_values_list = [[x[0]+"_"+base.name,x[1]] for index,base in mm_per[al_per<ranking[0]][al_per >=ranking[1]].iterrows() if base.dropna().values.all() for x in base.dropna().items()]
                 sort_way = 0 if sort == "name" else 1
                 zeros = sorted([[sample[0],sample[1][0]] for sample in ranking_values_list],key=lambda x: x[sort_way])
