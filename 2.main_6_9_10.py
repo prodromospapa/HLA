@@ -63,3 +63,5 @@ final = run(threads)
 final.to_pickle("final_6_9_10.pickle")
 
 #python3 2.main_6_9_10.py -t 25
+
+#a['10/10'].sort_values(key=lambda col: col.str.len())

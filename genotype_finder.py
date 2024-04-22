@@ -13,7 +13,7 @@ parser.add_argument('--number','-n', type=str, help='',required=False)
 args = parser.parse_args()
 
 df = pd.read_pickle('all_original.pickle')
-data = dd.from_pandas(df, npartitions=5)
+data = dd.from_pandas(df, npartitions=1)
 if args.id:
     if "," not in args.id:
         id = [args.id]  # loci are passed as command line arguments, ["A","B", "C", "DRB1", "DQB1", "DPB1"]
