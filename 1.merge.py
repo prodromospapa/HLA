@@ -17,12 +17,11 @@ def merge1(part):
             if all(row[loci_3].notna()):
                 if any(row[loci_5].isna()):
                     final_dict["loci"].append(3)
-                    for locus in loci_3+loci_5:
-                        try:
-                            value = ":".join(row[locus].split(":")[:2])
-                            final_dict[locus].append(value)
-                        except Exception:
-                            final_dict[locus].append(np.nan)
+                    for locus in loci_3:
+                        value = ":".join(row[locus].split(":")[:2])
+                        final_dict[locus].append(value)
+                    for locus in loci_5:
+                        final_dict[locus].append(np.nan)
                 elif all(row[loci_5].notna()):
                     final_dict["loci"].append(5)
                     for locus in loci_3+loci_5:
