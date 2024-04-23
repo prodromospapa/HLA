@@ -7,7 +7,6 @@ def merge1(part):
     n = part[0]
     part = list(part[1])
     if part:
-        final = pd.DataFrame()
         counter = 0
         final_dict = {"ID":[],"type":[],"loci":[],"generation":[],"A1":[],"A2":[],"B1":[],"B2":[],"C1":[],"C2":[],"DRB1_1":[],"DRB1_2":[],"DQB1_1":[],"DQB1_2":[]}
         for index,row in data.iloc[part].iterrows():
