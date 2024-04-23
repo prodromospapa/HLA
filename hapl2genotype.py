@@ -12,7 +12,6 @@ def sampling_fun_1(n_haplotype,population_size,freq):
 file_path = "data/DKMS_10000_181022"
 file_list = glob.glob(file_path + "/*.xlsx")
 
-# Iterate over each file and load it as a dataframe
 final = []
 population_size = 10**4
 for file in file_list:
