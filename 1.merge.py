@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from multiprocessing import Pool
 import argparse
+import re
 
 def merge1(part):
     n = part[0]
