@@ -20,13 +20,21 @@ def counter_allele(data):
                 final[base] = {}
                 for i in data[base].index:
                         counter+=1
-                        for allele in genotypes[base].loc[i]:
+                        if args.type == "allele":
+                                for allele in genotypes[base].loc[i]:
+                                        if allele not in final[base]:
+                                                final[base][allele] = {0:(mm[i]==0).sum(),1:(mm[i]==1).sum(),2:(mm[i]==2).sum()}
+                                        else:
+                                                for j in range(3):
+                                                        final[base][allele][j] += (mm[i]==j).sum()
+                        else:
+                                allele = "".join(genotypes[base].loc[i])
                                 if allele not in final[base]:
                                         final[base][allele] = {0:(mm[i]==0).sum(),1:(mm[i]==1).sum(),2:(mm[i]==2).sum()}
                                 else:
                                         for j in range(3):
                                                 final[base][allele][j] += (mm[i]==j).sum()
-                                print(f"{counter}/{len(data[base].index)*5}",end="\r")
+                        print(f"{counter}/{len(data[base].index)*5}",end="\r")
         for base in ["A","B","C","DRB1","DQB1"]:
                 for allele in final[base]:
                         total = sum(final[base][allele].values())
@@ -41,6 +49,7 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help='Direction(GvH or HvG)', required=True)
 parser.add_argument('--direction','-d', choices=['GvH','HvG'], help='Direction(GvH or HvG)', required=True)
+parser.add_argument('--type','-t', choices=['allele','genotype'], help='Type of data to be saved', required=True)
 
 args = parser.parse_args()
 
