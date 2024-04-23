@@ -1,9 +1,7 @@
 import pandas as pd
 import glob
 from numpy.random import choice
-import random
 from itertools import chain
-from collections    import Counter
 
 
 def sampling_fun_1(n_haplotype,population_size,freq):
@@ -29,8 +27,6 @@ for file in file_list:
 
     final = [[allele.split("*")[1] for allele in item.split("~")] for item in haplotype]
     sampling = sampling_fun_1(n_haplotype,population_size,freq)
-
-    #random.shuffle(sampling)
     for sample_pair in range(population_size):
         counter+=1
         row = chain(*zip(final[sampling[sample_pair*2]], final[sampling[sample_pair*2+1]]))
