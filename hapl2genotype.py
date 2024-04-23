@@ -18,16 +18,18 @@ for file in file_list:
     df = pd.DataFrame(columns=["A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"])
     counter = 0
     haplotype = pd.read_excel(file).iloc[:,0].tolist()
+    
     freq = pd.read_excel(file).iloc[:,1].tolist()
     freq = [item/sum(freq) for item in freq]
-    n_haplotype = len(haplotype)
 
     final = [[allele.split("*")[1] for allele in item.split("~")] for item in haplotype]
-    sampling = sampling_fun_1(n_haplotype,population_size,freq)
+
+    sampling = sampling_fun_1(len(haplotype),population_size,freq)
+
     for sample_pair in range(population_size):
         counter+=1
         row = chain(*zip(final[sampling[sample_pair*2]], final[sampling[sample_pair*2+1]]))
         df = df._append(pd.Series(row, index=df.columns), ignore_index=True)
         print(f"{counter}/{population_size}",end="\r")
     df.to_excel("data/genotype/"+file.split("/")[-1].replace(".xlsx","")+".genotype.xlsx", index=False)
-    print(f"\n{file.split("/")[-1]} is done ({file.index(file_list)+1}/{len(file_list)})")
+    print(f"\n{file.split("/")[-1]} is done ({file_list.index(file)+1}/{len(file_list)})")
