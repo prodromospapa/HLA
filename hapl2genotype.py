@@ -15,10 +15,8 @@ file_list = glob.glob(file_path + "/*.xlsx")
 # Iterate over each file and load it as a dataframe
 final = []
 population_size = 10**4
-#file_list = ["data/3_loci/1977hapl_3012_2field_CBUs_3loci_excl.bl.xlsx"]
 for file in file_list:
     df = pd.DataFrame(columns=["A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"])
-    #df = pd.DataFrame(columns=["A1","A2","B1","B2","DRB1_1","DRB1_2"])
     counter = 0
     haplotype = pd.read_excel(file).iloc[:,0].tolist()
     freq = pd.read_excel(file).iloc[:,1].tolist()
@@ -32,7 +30,5 @@ for file in file_list:
         row = chain(*zip(final[sampling[sample_pair*2]], final[sampling[sample_pair*2+1]]))
         df = df._append(pd.Series(row, index=df.columns), ignore_index=True)
         print(f"{counter}/{population_size}",end="\r")
-    #df.to_excel("data/genotype/"+file.split("/")[-1].replace(".xlsx","")+".genotype.xlsx", index=False)
-    df.to_excel("est.xlsx", index=False)
+    df.to_excel("data/genotype/"+file.split("/")[-1].replace(".xlsx","")+".genotype.xlsx", index=False)
     print(f"\n{file.split("/")[-1]} is done ({file.index(file_list)+1}/{len(file_list)})")
-    
