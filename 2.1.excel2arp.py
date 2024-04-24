@@ -38,10 +38,9 @@ SampleData= {{
 
 
 data = pd.read_pickle('all_original_unmerged.pickle')[["ID","A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]]
-data = data.fillna('?')
 
 # Call the xl2arp function with the loci, grouped alleles, data paths, and output path
-xl2arp(data, 'output.arp')
+xl2arp(data, 'output_.arp')
 
 #chmod +x arlecore3522_64bit
 #bash arlecore_linux/LaunchArlecore.sh output.arp arlecore_linux/arl_run.ars
