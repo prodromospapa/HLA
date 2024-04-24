@@ -48,7 +48,6 @@ def HW(data):
         if data[i].startswith("---------------------"):
              borders.append(i)
     table = data[borders[1]+1:borders[2]]
-
     #text2table
     headers = ['Locus', '#Genot', 'Obs.Het.', 'Exp.Het.', 'P-value', 's.d.', 'Steps done']
     data = []
@@ -58,7 +57,6 @@ def HW(data):
     df = pd.DataFrame(data, columns=headers)  # Create a DataFrame from the data and headers
     df.set_index('Locus', inplace=True)
     #text2table
-
     return df
 
 def return_data(file_path,test):
@@ -66,24 +64,22 @@ def return_data(file_path,test):
         content = file.read()
     # This regex pattern looks for 'Reference' followed by any characters (non-greedy),
     # then 'data' and captures any characters until the next 'data'
-    pattern = re.compile(r'== Sample : 	(.*?\.xlsx).*?== .*? : .*?</Reference>\n<data>(.*?)</data>.*?</Reference>\n<data>(.*?)</data>', re.DOTALL)
+    pattern = re.compile(r'== Sample : 	([A-Za-z_]*?)\n.*?== .*? : .*?</Reference>\n<data>(.*?)</data>.*?</Reference>\n<data>(.*?)</data>', re.DOTALL)
     # Find all non-overlapping matches of the regex pattern in the content
     matches = pattern.findall(content)
     # Extract the first value of each sublist as the key and the next two values as the values
     xlsx_files = [sublist[0] for sublist in matches]
     result_dict = [{"LD":[i.strip() for i in sublist[1].split("\n") if i!=""],"HWE":[i.strip() for i in sublist[2].split("\n") if i!=""]} for sublist in matches]
-
+    
     #if multiple xlsx files are present in the output file then ask the user to select the file
     xlsx = 0
     if len(xlsx_files) > 1:
         question = dict(zip(range(len(xlsx_files)),xlsx_files))
         xlsx = int(input(f"Enter the xlsx file index {question}: "))
 
-    test_dict = {"LD":["ld","LD","Pairwise linkage disequilibrium"],
-                 "HWE":["hw","HW","Hardy-Weinberg equilibrium"]}
-    if test in test_dict["LD"]:
+    if test == "LD":
         return LD(result_dict[xlsx]["LD"])
-    elif test in test_dict["HWE"]:
+    elif test == "HWE":
         return HW(result_dict[xlsx]["HWE"])    
     
 
@@ -92,7 +88,7 @@ parser = argparse.ArgumentParser(
                     description='What the program does',
                     epilog='Text at the bottom of help')
 
-parser.add_argument('--test','-t', type=str, help='Test to include in the ARP file')
+parser.add_argument('--test','-t',choices=["HWE","LD"], type=str, help='Test to include in the ARP file',required=True)
 args = parser.parse_args()
 
 pprint(return_data("output.res/output.xml",args.test))
