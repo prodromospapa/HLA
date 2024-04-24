@@ -15,7 +15,7 @@ file_list = glob.glob(file_path + "/*.xlsx")
 final = []
 population_size = 10**4
 for file in file_list:
-    df = pd.DataFrame(columns=["A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"])
+    df = pd.DataFrame(columns=["A1","A2","B1","B2","C1","C2","DQB1_1","DQB1_2","DRB1_1","DRB1_2"])
     counter = 0
     haplotype = pd.read_excel(file).iloc[:,0].tolist()
     
@@ -23,7 +23,6 @@ for file in file_list:
     freq = [item/sum(freq) for item in freq]
 
     final = [[allele.split("*")[1] for allele in item.split("~")] for item in haplotype]
-
     sampling = sampling_fun_1(len(haplotype),population_size,freq)
 
     for sample_pair in range(population_size):
