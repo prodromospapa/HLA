@@ -3,11 +3,14 @@ import pandas as pd
 
 def xl2arp(data):
     # Initialize the ARP file content
-    arp_content_fst = arp_content_h_l = f"""[Profile]
+    arp_content_fst = arp_content_h_l = f'''[Profile]
 
-    Title="Genetic Data from Greek Populations"
-    NbSamples={len(data)}
-    GenotypicData=1
+    Title="Genetic Data from Greek Populations"\n'''
+
+    arp_content_fst += f'    NbSamples=1\n'
+    arp_content_h_l += f'    NbSamples={len(data)}\n'
+
+    add = '''    GenotypicData=1
     GameticPhase=0
     DataType=STANDARD 
     LocusSeparator=TAB 
@@ -18,9 +21,9 @@ def xl2arp(data):
 
 [[Samples]]
 
-"""
-
-    arp_content_h_l += f'''SampleName="Greece"
+'''
+    arp_content_fst += add
+    arp_content_h_l += add + f'''SampleName="Greece"
 SampleSize={len(data)}
 SampleData= {{
 '''
@@ -31,12 +34,11 @@ SampleData= {{
     for index, row in data.iterrows():
         counter +=1
         arp_content_h_l += f"{row['ID']}\t" + "1\t" + '\t'.join(row[['A1','B1','C1','DRB1_1','DQB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','C2','DRB1_2','DQB1_2']]) + "\n"
-        arp_content_fst += f'''SampleName={row['ID']}\nSampleSize=1\nSampleData= {{\n{row['ID']}\t''' + "1\t" + '\t'.join(row[['A1','B1','C1','DRB1_1','DQB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','C2','DRB1_2','DQB1_2']]) + "}\n"
+        arp_content_fst += f'''SampleName="{row['ID']}"\nSampleSize=1\nSampleData= {{\n{row['ID']}\t''' + "1\t" + '\t'.join(row[['A1','B1','C1','DRB1_1','DQB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','C2','DRB1_2','DQB1_2']]) + "}\n\n"
         print(f"{counter}/{total}",end="\r")
 
     # Write the ARP file
     arp_content_h_l += "}\n\n"
-    arp_content_fst += "}\n\n"
     with open('output_h_l.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
     with open('output_fst.arp', 'w') as arp_file:
