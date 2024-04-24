@@ -42,3 +42,6 @@ data = data.fillna('?')
 
 # Call the xl2arp function with the loci, grouped alleles, data paths, and output path
 xl2arp(data, 'output.arp')
+
+#chmod +x arlecore3522_64bit
+#bash arlecore_linux/LaunchArlecore.sh output.arp arlecore_linux/arl_run.ars
