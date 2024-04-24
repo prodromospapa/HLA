@@ -30,5 +30,6 @@ for file in file_list:
         row = chain(*zip(final[sampling[sample_pair*2]], final[sampling[sample_pair*2+1]]))
         df = df._append(pd.Series(row, index=df.columns), ignore_index=True)
         print(f"{counter}/{population_size}",end="\r")
+    df = df[["A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]]
     df.to_excel("data/genotype/"+file.split("/")[-1].replace(".xlsx","")+".genotype.xlsx", index=False)
     print(f"\n{file.split("/")[-1]} is done ({file_list.index(file)+1}/{len(file_list)})")

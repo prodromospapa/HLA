@@ -83,4 +83,5 @@ data = pd.read_excel(file)[['ID','TYPE','GENERATION','A1_GROUPED','A2_GROUPED','
 data.columns = ['ID',"TYPE",'GENERATION','A1','A2','B1','B2','C1','C2','DRB1_1','DRB1_2','DQB1_1','DQB1_2']
 
 final = run(args.threads)
+final.to_pickle("all_original_unmerged.pickle")
 merge2(final)
