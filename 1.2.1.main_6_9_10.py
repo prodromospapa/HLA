@@ -59,7 +59,7 @@ threads = args.threads
 if threads > os.cpu_count():
     threads = int(round(os.cpu_count()*0.8,0))
 final = run(threads)
-#final = final[~final.apply(lambda row: all(x == [] for x in row), axis=1)]
+final = final[~final.apply(lambda row: all(x == [] for x in row), axis=1)]
 final.to_pickle("final_6_9_10.pickle")
 
 #python3 2.main_6_9_10.py -t 25
