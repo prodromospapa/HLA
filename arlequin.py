@@ -19,6 +19,9 @@ def LD(data): #replace
             #convert dictionary to dataframe
             df_pair = pd.DataFrame(pair_data).T
             df_pair.columns = ['LnLHood LD', 'LnLHood LE', 'Exact P', 'Chi-square test']
+            
+            #Exact P: [value, +- error, permutation]
+            #Chi-square test: [x2, p, df]
 
         elif data[i].startswith("Histogram of the number of linked loci per locus"):#same replace number with allele
             locus = data[i+2].split()[1:]
