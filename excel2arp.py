@@ -37,7 +37,7 @@ SampleData= {{
         arp_file.write(arp_content)
 
 
-data = pd.read_pickle('all_original_unmerged.pickle')[["ID","A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]].iloc[0:100]
+data = pd.read_pickle('all_original_unmerged.pickle')[["ID","A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]]
 data = data.fillna('?')
 
 # Call the xl2arp function with the loci, grouped alleles, data paths, and output path
