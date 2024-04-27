@@ -1,4 +1,5 @@
 import pandas as pd
+from collections import Counter
 
 
 def xl2arp(data):
@@ -7,8 +8,12 @@ def xl2arp(data):
 
     Title="Genetic Data from Greek Populations"'''
 
+    if drop_double:
+        fst_n = len(counter_dict)
+    else:
+        fst_n = len(data)
     arp_content_fst += f'''
-    NbSamples={len(data)}
+    NbSamples={fst_n}
     GenotypicData=1
     GameticPhase=0
     DataType=STANDARD 
@@ -47,15 +52,26 @@ SampleData= {{
 
     for index, row in data.iterrows():
         counter +=1
-        if loci == 3:
-            arp_content_h_l += f"{row['ID']}\t" + "1\t" + '\t'.join(row[['A1','B1','DRB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','DRB1_2']]) + "\n"
-            arp_content_fst += f'''SampleName="{row['ID']}"\nSampleSize=1\nSampleData= {{\n{row['ID']}\t''' + "1\t" + '\t'.join(row[['A1','B1','DRB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','DRB1_2']]) + "}\n\n"
-        elif loci in ['A','B','C','DRB1','DQB1']:
-            arp_content_h_l += f"{row['ID']}\t" + "1\t" + '\t'.join(row[loci_dict[loci]]) + "\n"
-            arp_content_fst += f'''SampleName="{row['ID']}"\nSampleSize=1\nSampleData= {{\n{row['ID']}\t''' + "1\t" + row[loci_dict[loci][0]] + "\n" + "\t" + row[loci_dict[loci][1]] + "}\n\n"
+        if drop_double:
+            if loci in ['A','B','C','DRB1','DQB1']:
+                dict_key = tuple(row[loci_dict[loci]])
+            else:
+                dict_key = tuple(row[loci_list])
+            n = counter_dict[dict_key]
+            name = counter
+            name_id = dict_key
         else:
-            arp_content_h_l += f"{row['ID']}\t" + "1\t" + '\t'.join(row[['A1','B1','C1','DRB1_1','DQB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','C2','DRB1_2','DQB1_2']]) + "\n"
-            arp_content_fst += f'''SampleName="{row['ID']}"\nSampleSize=1\nSampleData= {{\n{row['ID']}\t''' + "1\t" + '\t'.join(row[['A1','B1','C1','DRB1_1','DQB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','C2','DRB1_2','DQB1_2']]) + "}\n\n"
+            name_id = name = f"{row['ID']}"
+            n = 1
+        if loci == 3:
+            arp_content_h_l += f"{name}\t" + f"{n}\t" + '\t'.join(row[['A1','B1','DRB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','DRB1_2']]) + "\n"
+            arp_content_fst += f'''SampleName="{name_id}"\nSampleSize={n}\nSampleData= {{\n{name}\t''' + f"{n}\t" + '\t'.join(row[['A1','B1','DRB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','DRB1_2']]) + "}\n\n"
+        elif loci in ['A','B','C','DRB1','DQB1']:
+            arp_content_h_l += f"{name}\t" + f"{n}\t" + '\t'.join(row[loci_dict[loci]]) + "\n"
+            arp_content_fst += f'''SampleName="{name_id}"\nSampleSize={n}\nSampleData= {{\n{name}\t''' + f"{n}\t" + row[loci_dict[loci][0]] + "\n" + "\t" + row[loci_dict[loci][1]] + "}\n\n"
+        else:
+            arp_content_h_l += f"{name}\t" + f"{n}\t" + '\t'.join(row[['A1','B1','C1','DRB1_1','DQB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','C2','DRB1_2','DQB1_2']]) + "\n"
+            arp_content_fst += f'''SampleName="{name_id}"\nSampleSize={n}\nSampleData= {{\n{name}\t''' + f"{n}\t" + '\t'.join(row[['A1','B1','C1','DRB1_1','DQB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','C2','DRB1_2','DQB1_2']]) + "}\n\n"
         print(f"{counter}/{total}",end="\r")
 
     # Write the ARP file
@@ -64,10 +80,18 @@ SampleData= {{
     
 
 input = 'all_original_unmerged.pickle'
-loci = 'A'
+loci = "DRB1"
+drop_double = True
+
+
+
 
 if loci == 3:
-    data = pd.read_pickle(input)[["ID","A1","A2","B1","B2","DRB1_1","DRB1_2"]]
+    loci_list = ["A1","A2","B1","B2","DRB1_1","DRB1_2"]
+    data = pd.read_pickle(input)[["ID"]+loci_list]
+    if drop_double:
+        counter_dict = dict(data[loci_list].value_counts())
+        data = data.drop_duplicates(subset=loci_list)
     arp_content_h_l, arp_content_fst = xl2arp(data)
     with open(f'output_h_l_{loci}.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
@@ -75,8 +99,12 @@ if loci == 3:
         arp_file.write(arp_content_fst)
 
 elif loci == 5:
+    loci_list = ["A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]
     data = pd.read_pickle(input)
-    data = data[data['loci']==5][["ID","A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]]
+    data = data[data['loci']==5][["ID"]+loci_list]
+    if drop_double:
+        counter_dict = dict(data[loci_list].value_counts())
+        data = data.drop_duplicates(subset=loci_list)
     arp_content_h_l, arp_content_fst = xl2arp(data)
     with open(f'output_h_l_{loci}.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
@@ -86,15 +114,21 @@ elif loci == 5:
 elif loci in ['A','B','C','DRB1','DQB1']:
     loci_dict = {"A":["A1","A2"],"B":["B1","B2"],"C":["C1","C2"],"DRB1":["DRB1_1","DRB1_2"],"DQB1":["DQB1_1","DQB1_2"]}
     data = pd.read_pickle(input)[["ID"]+loci_dict[loci]]
+    if drop_double:
+        counter_dict = dict(data[loci_dict[loci]].value_counts())
+        data = data.drop_duplicates(subset=loci_dict[loci])
     data = data.dropna()
     arp_content_h_l, arp_content_fst = xl2arp(data)
     with open(f'output_h_l_{loci}.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
     with open(f'output_fst_{loci}.arp', 'w') as arp_file:
         arp_file.write(arp_content_fst)
-
 else:
-    data = pd.read_pickle(input)[["ID","A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]]
+    loci_list = ["A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]
+    data = pd.read_pickle(input)[["ID"]+loci_list]
+    if drop_double:
+        counter_dict = dict(data[loci_list].value_counts())
+        data = data.drop_duplicates(subset=loci_list)
     data = data.fillna('?')
     arp_content_h_l, arp_content_fst = xl2arp(data)
     with open('output_h_l.arp', 'w') as arp_file:
