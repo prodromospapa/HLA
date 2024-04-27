@@ -91,9 +91,9 @@ SampleData= {{
     return arp_content_h_l, arp_content_fst
     
 parser = argparse.ArgumentParser(description='Convert excel file to arlequin format')
-parser.add_argument('input', type=str, help='Input excel file')
-parser.add_argument('loci', type=str,choices=['3','5','A','B','C','DRB1','DQB1','all'], help='Number of loci')
-parser.add_argument('--drop_double', type=bool, help='Drop double entries', default=True)
+parser.add_argument('--input','-i', type=str, help='Input excel file')
+parser.add_argument('--loci','-l', type=str,choices=['3','5','A','B','C','DRB1','DQB1','all'], help='Number of loci')
+parser.add_argument('--drop_double','-d', action='store_true', help='Drop double entries', default=True)
 
 args = parser.parse_args()
 
@@ -150,7 +150,8 @@ else:
     with open('output_fst.arp', 'w') as arp_file:
         arp_file.write(arp_content_fst)
 
-
+# python3 2.1.excel2arp.py -i all_original_unmerged.pickle -l 3
+# python3 2.1.excel2arp.py -i all_original_unmerged.pickle -l 5 -d
 
 #chmod +x arlecore3522_64bit
 #bash arlecore_linux/LaunchArlecore.sh output.arp arlecore_linux/arl_run.ars
