@@ -93,12 +93,13 @@ SampleData= {{
 parser = argparse.ArgumentParser(description='Convert excel file to arlequin format')
 parser.add_argument('--input','-i', type=str, help='Input excel file')
 parser.add_argument('--loci','-l', type=str,choices=['3','5','A','B','C','DRB1','DQB1','all'], help='Number of loci')
-parser.add_argument('--drop_double','-d', action='store_true', help='Drop double entries', default=True)
+parser.add_argument('--drop_double','-d', action='store_true', help='Drop double entries')
 
 args = parser.parse_args()
 
 loci = args.loci
 drop_double = args.drop_double
+input = args.input
 
 if loci == '3':
     loci_list = ["A1","A2","B1","B2","DRB1_1","DRB1_2"]
