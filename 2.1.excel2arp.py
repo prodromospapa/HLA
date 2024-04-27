@@ -155,4 +155,4 @@ else:
 # python3 2.1.excel2arp.py -i all_original_unmerged.pickle -l 5 -d
 
 #chmod +x arlecore3522_64bit
-#bash arlecore_linux/LaunchArlecore.sh output.arp
+#bash arlecore_linux/LaunchArlecore.sh output_fst.arp
