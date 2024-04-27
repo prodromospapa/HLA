@@ -1,5 +1,5 @@
 import pandas as pd
-from collections import Counter
+import argparse
 
 
 def xl2arp(data):
@@ -49,7 +49,7 @@ SampleData= {{
 
     counter = 0
     total = len(data)
-
+    structure = ""
     for index, row in data.iterrows():
         counter +=1
         if drop_double:
@@ -63,6 +63,7 @@ SampleData= {{
         else:
             name_id = name = f"{row['ID']}"
             n = 1
+        structure += f'\t"{name_id}"\n'
         if loci == 3:
             arp_content_h_l += f"{name}\t" + f"{n}\t" + '\t'.join(row[['A1','B1','DRB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','DRB1_2']]) + "\n"
             arp_content_fst += f'''SampleName="{name_id}"\nSampleSize={n}\nSampleData= {{\n{name}\t''' + f"{n}\t" + '\t'.join(row[['A1','B1','DRB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','DRB1_2']]) + "}\n\n"
@@ -76,17 +77,30 @@ SampleData= {{
 
     # Write the ARP file
     arp_content_h_l += "}\n\n"
+
+    arp_content_fst +=f'''[[Structure]]
+
+	StructureName="New Edited Structure"
+	NbGroups=1
+
+	Group={{
+{structure}
+	}}
+    '''
+    
     return arp_content_h_l, arp_content_fst
     
+parser = argparse.ArgumentParser(description='Convert excel file to arlequin format')
+parser.add_argument('input', type=str, help='Input excel file')
+parser.add_argument('loci', type=str,choices=['3','5','A','B','C','DRB1','DQB1','all'], help='Number of loci')
+parser.add_argument('--drop_double', type=bool, help='Drop double entries', default=True)
 
-input = 'all_original_unmerged.pickle'
-loci = "DRB1"
-drop_double = True
+args = parser.parse_args()
 
+loci = args.loci
+drop_double = args.drop_double
 
-
-
-if loci == 3:
+if loci == '3':
     loci_list = ["A1","A2","B1","B2","DRB1_1","DRB1_2"]
     data = pd.read_pickle(input)[["ID"]+loci_list]
     if drop_double:
@@ -98,7 +112,7 @@ if loci == 3:
     with open(f'output_fst_{loci}.arp', 'w') as arp_file:
         arp_file.write(arp_content_fst)
 
-elif loci == 5:
+elif loci == '5':
     loci_list = ["A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]
     data = pd.read_pickle(input)
     data = data[data['loci']==5][["ID"]+loci_list]
@@ -126,10 +140,10 @@ elif loci in ['A','B','C','DRB1','DQB1']:
 else:
     loci_list = ["A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]
     data = pd.read_pickle(input)[["ID"]+loci_list]
+    data = data.fillna('?')
     if drop_double:
         counter_dict = dict(data[loci_list].value_counts())
         data = data.drop_duplicates(subset=loci_list)
-    data = data.fillna('?')
     arp_content_h_l, arp_content_fst = xl2arp(data)
     with open('output_h_l.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
