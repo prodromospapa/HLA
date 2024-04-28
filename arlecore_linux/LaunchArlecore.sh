@@ -16,3 +16,6 @@ echo "Processing file $file"
 
 rm -f arl_run.txt
 rm -f arlequin.ini
+rm -f arl_pro.txt
+rm -f arl_run.ars
+rm -f randseed.txt
