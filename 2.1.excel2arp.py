@@ -92,15 +92,14 @@ SampleData= {{
     return arp_content_h_l, arp_content_fst
     
 parser = argparse.ArgumentParser(description='Convert excel file to arlequin format')
-parser.add_argument('--input','-i',default="all_original_unmerged.pickle", type=str, help='Input excel file',required=False)
-parser.add_argument('--loci','-l', type=str,choices=['3','5','A','B','C','DRB1','DQB1','all'], help='Number of loci')
+parser.add_argument('--loci','-l', type=str,choices=['3','5','A','B','C','DRB1','DQB1','all'], help='Number of loci',required=True)
 parser.add_argument('--drop_double','-d', action='store_true', help='Drop double entries')
 
 args = parser.parse_args()
 
 loci = args.loci
 drop_double = args.drop_double
-input = args.input
+input = "all_original_unmerged.pickle"
 
 # Create the output folder if it doesn't exist
 if not os.path.exists('output'):
@@ -112,7 +111,7 @@ if loci == '3':
     if drop_double:
         counter_dict = dict(data[loci_list].value_counts())
         data = data.drop_duplicates(subset=loci_list)
-        name_d = "_d"
+        name_d = "_no_d"
     arp_content_h_l, arp_content_fst = xl2arp(data)
     with open(f'output/output_h_l_{loci}{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
@@ -126,7 +125,7 @@ elif loci == '5':
     if drop_double:
         counter_dict = dict(data[loci_list].value_counts())
         data = data.drop_duplicates(subset=loci_list)
-        name_d = "_d"
+        name_d = "_no_d"
     arp_content_h_l, arp_content_fst = xl2arp(data)
     with open(f'output/output_h_l_{loci}{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
@@ -139,7 +138,7 @@ elif loci in ['A','B','C','DRB1','DQB1']:
     if drop_double:
         counter_dict = dict(data[loci_dict[loci]].value_counts())
         data = data.drop_duplicates(subset=loci_dict[loci])
-        name_d = "_d"
+        name_d = "_no_d"
     data = data.dropna()
     arp_content_h_l, arp_content_fst = xl2arp(data)
     with open(f'output/output_h_l_{loci}{name_d}.arp', 'w') as arp_file:
@@ -153,7 +152,7 @@ else:
     if drop_double:
         counter_dict = dict(data[loci_list].value_counts())
         data = data.drop_duplicates(subset=loci_list)
-        name_d = "_d"
+        name_d = "_no_d"
     arp_content_h_l, arp_content_fst = xl2arp(data)
     with open(f'output/output_h_l{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
