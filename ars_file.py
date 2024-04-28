@@ -16,8 +16,8 @@ elif test == "AMOVA":
     AMOVA_perm = args.permutation
 
 
-with open("arl_run.ars") as r:
-    with open('arlecores_linux/output.ars','w') as w:
+with open("arlecore_linux/arl_run.ars") as r:
+    with open('arlecore_linux/output.ars','w') as w:
         for line in r:
             if test == "HL":
                 if line.startswith("MakeExactTestLD"):
