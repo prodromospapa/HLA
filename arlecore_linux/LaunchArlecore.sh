@@ -10,3 +10,5 @@ fi
 echo "Processing file $file"
 
 ./$arlecore $file $settingsFile
+
+rm -f output/arl*

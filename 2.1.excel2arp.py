@@ -1,5 +1,6 @@
 import pandas as pd
 import argparse
+import os
 
 
 def xl2arp(data):
@@ -100,6 +101,10 @@ args = parser.parse_args()
 loci = args.loci
 drop_double = args.drop_double
 input = args.input
+
+# Create the output folder if it doesn't exist
+if not os.path.exists('output'):
+    os.makedirs('output')
 
 if loci == '3':
     loci_list = ["A1","A2","B1","B2","DRB1_1","DRB1_2"]
