@@ -17,8 +17,8 @@ parser.add_argument('--sort','-s', choices=['value','name'], help='Sort by value
 
 args = parser.parse_args()
 
-mm_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_mm_per.pickle")
-al_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_al_per.pickle")
+mm_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_allele_mm_per.pickle")
+al_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_allele_freq_per.pickle")
 
 mm_per = mm_per_df
 al_per = al_per_df.reindex(mm_per.index)

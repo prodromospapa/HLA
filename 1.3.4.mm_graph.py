@@ -13,8 +13,8 @@ parser.add_argument('--direction','-d', choices=['GvH','HvG'], help='Direction(G
 
 args = parser.parse_args()
 
-mm_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_mm_per.pickle")
-al_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_al_per.pickle")
+mm_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_allele_mm_per.pickle")
+al_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_allele_freq_per.pickle")
 
 # Create 'plots' folder if it doesn't exist
 if not os.path.exists('plots'):
