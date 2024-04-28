@@ -110,13 +110,13 @@ def parse_xml(xml_file):
 
     # Extract the global AMOVA results
     df_global_amo = pd.DataFrame(['Among populations','Among individuals within populations ','Withing populations',"Total"], columns=["Source of Variation"])
-    df_global_amo.set_index("Source of Variation", inplace=True)
+    df_global_amo = df_global_amo.set_index("Source of Variation")
     header = ["Sum of Squares", "Variance Components", "% variation"]
-    df_global_amo[header] = pd.DataFrame([i.split()[1:] for i in global_amo_results.split("\n")[11:-14] if i.split()[1:]],index=df_global_amo.index)
+    df_global_amo[header] = pd.DataFrame([i.split()[1:] for i in global_amo_results.split("\n")[11:-28] if i.split()[1:]],index=df_global_amo.index)
 
     # Extract the FST, FIT and FIS values
     fst = {}
-    for item in global_amo_results.split("\n")[-9:-6]:
+    for item in global_amo_results.split("\n")[-23:-20]:
         key, value = item.split(':')
         fst[key.strip()] = float(value.strip())
 

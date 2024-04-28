@@ -28,7 +28,7 @@
 #GENOTYPE ASSIGNMENT TEST: +32768
 #MANTEL TEST: +65536
 
-TaskNumber=48
+TaskNumber=512
 #----------------------------------------------------------------------------
 
 #----------------
@@ -95,7 +95,7 @@ KeepNullDistrib=0
 
 #MakeHWExactTest controls if exact test of HWE neEds to be performed (1: yes, 0: no)
 
-MakeHWExactTest=1
+MakeHWExactTest=0
 
 #HardyWeinbergTestType: DEPRECATED, replaced by key TypeOfTestHW
 #                       0 for locus by locus test, 
@@ -138,7 +138,7 @@ LinkageDisequilibriumTestType=1
 #If the gametic phase is known, an exact test will be performed, and
 #if it is not, a likelihood-ratio will be done
 
-MakeExactTestLD=1
+MakeExactTestLD=0
 
 #MarkovChainDememorisationStepsLD controls the number of burnin steps at the
 #beginning of the Markov chain (when gametic phae is known)
@@ -150,7 +150,7 @@ MarkovChainDememorisationStepsLD=1000
 #to be performed to test the p-value of the likelihood-ratio test when the gametic phase
 #is unknown
 
-MarkovChainStepsLD=1
+MarkovChainStepsLD=1000
 
 #PrecisionOnPValueLD controls the precision required for the 
 #p-value of the LD exact test (OBSOLETE SETTING)
@@ -164,7 +164,7 @@ SignificanceLevelLD=0.050000
 
 #PrintFlagHistogramLD controls if a file with a summary of the LD test results needs ot be produced
 
-PrintFlagHistogramLD=1
+PrintFlagHistogramLD=0
 
 #InitialCondEMLD controls the number of different EM algorithm runs to
 #perform for the LD likelihood ratio test when the gametic phase is not known
@@ -425,7 +425,7 @@ HaplAMOVA=0
 
 #LocByLocAMOVA controls if the AMOVA computations need to be performed separately for each locus.
 
-LocByLocAMOVA=0
+LocByLocAMOVA=1
 
 #PopSpecificFST controls if population specific FST indices need to be computed.
 
@@ -440,7 +440,7 @@ TestSignificanceAMOVA=1
 
 #NumPermutationsAMOVA controls if variance components are tested by permutations, 
 #and sets the number of permutations to be performed
-NumPermutationsAMOVA=1000
+NumPermutationsAMOVA=1
 
 #ComputeConventionalFST controls if conventional FSt are to be computed as opposed to
 #F-statistics taking into account molecular diversity. Conventional FST do only depend on
@@ -451,7 +451,7 @@ ComputeConventionalFST=0
 #IncludeIndividualLevel controls if FIS statistics and associated variance components
 #should be computed
 
-IncludeIndividualLevel=0
+IncludeIndividualLevel=1
 
 #ComputeDistanceMatrixAMOVA controls if a matrix of pairwise Euclidian distances needs to be computed
 #and used for AMOVA computations
