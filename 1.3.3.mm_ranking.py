@@ -5,10 +5,12 @@ import os
 import matplotlib.pyplot as plt
 
 def fontsizer(df):
-    num_labels = len(df)
-    if num_labels > 0:
-        plot_width = plt.gcf().get_size_inches()[0]  # Get the width of the plot in inches
-        return plot_width / num_labels * 72  # The '72' is to convert from inches to points
+        num_labels = len(df)
+        if num_labels > 0:
+                plot_width = plt.gcf().get_size_inches()[0]  # Get the width of the plot in inches
+                return plot_width / num_labels * 72  # The '72' is to convert from inches to points
+        else:
+                return 8
 
 
 parser = argparse.ArgumentParser(
