@@ -35,8 +35,8 @@ if not os.path.exists('plots'):
 dpi = args.dpi
 def ranking_plot(plot,ranking_list,sort):
         for ranking in ranking_list:
-                values = mm_per[freq_per<ranking[0]][freq_per >=ranking[1]].dropna(how="all")
-                if values.empty:
+                values = mm_per[freq_per<ranking[0]][freq_per >=ranking[1]]
+                if values.isna().all().all():
                         print(f"{ranking}: No data")
                 else:
                         #alleles
@@ -46,7 +46,7 @@ def ranking_plot(plot,ranking_list,sort):
                         ones = sorted([[sample[0],sample[1][1]] for sample in ranking_values_list],key=lambda x: x[sort_way])
                         twos = sorted([[sample[0],sample[1][2]] for sample in ranking_values_list],key=lambda x: x[sort_way])
                         #total
-                        ranking_values_list_total = [y for x in values.iterrows() for y in x if type(y).__name__=="dict"]
+                        ranking_values_list_total = [y for x in values.values.tolist() for y in x if type(y).__name__=="dict"]
                         zeros_total = [dictionary[0] for dictionary in ranking_values_list_total]
                         ones_total = [dictionary[1] for dictionary in ranking_values_list_total]
                         twos_total = [dictionary[2] for dictionary in ranking_values_list_total]
