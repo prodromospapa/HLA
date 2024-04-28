@@ -150,7 +150,7 @@ MarkovChainDememorisationStepsLD=1000
 #to be performed to test the p-value of the likelihood-ratio test when the gametic phase
 #is unknown
 
-MarkovChainStepsLD=1000
+MarkovChainStepsLD=10
 
 #PrecisionOnPValueLD controls the precision required for the 
 #p-value of the LD exact test (OBSOLETE SETTING)

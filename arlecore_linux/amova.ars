@@ -430,7 +430,7 @@ LocByLocAMOVA=1
 #PopSpecificFST controls if population specific FST indices need to be computed.
 
 PopSpecificFST=0
-PopSpecificFIS=1
+PopSpecificFIS=0
 
 #TestSignificanceAMOVA should be set to 1 to perfrom significance testing of the variance components
 #OBSOLETE settings (could probably be removed), because significance testing is 
@@ -440,7 +440,7 @@ TestSignificanceAMOVA=1
 
 #NumPermutationsAMOVA controls if variance components are tested by permutations, 
 #and sets the number of permutations to be performed
-NumPermutationsAMOVA=1000
+NumPermutationsAMOVA=0
 
 #ComputeConventionalFST controls if conventional FSt are to be computed as opposed to
 #F-statistics taking into account molecular diversity. Conventional FST do only depend on
@@ -473,7 +473,7 @@ GammaAValueAMOVA=0.000000
 #PrintDistanceMatrix controls if the matrix of pairwise distance between haplotypes should
 #be output in the result file
 
-PrintDistanceMatrix=1
+PrintDistanceMatrix=0
 
 #PrintMinSpannNetworkGlob controls if a Minimum Spanning Network need sto be computed from a matrix
 #or pairwise distances between all pairs of haplotypes found in the population samples included in the

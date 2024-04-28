@@ -71,7 +71,7 @@ SampleData= {{
             arp_content_h_l += f"{name}\t" + f"{n}\t" + '\t'.join(row[['A1','B1','DRB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','DRB1_2']]) + "\n"
             arp_content_fst += f'''SampleName="{name_id}"\nSampleSize={n}\nSampleData= {{\n{name}\t''' + f"{n}\t" + '\t'.join(row[['A1','B1','DRB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','DRB1_2']]) + "}\n\n"
         elif loci in ['A','B','C','DRB1','DQB1']:
-            arp_content_h_l += f"{name}\t" + f"{n}\t" + '\t'.join(row[loci_dict[loci]]) + "\n"
+            arp_content_h_l += f"{name}\t" + f"{n}\t" + row[loci_dict[loci][0]] + "\n" + "\t" + row[loci_dict[loci][1]] + "\n"
             arp_content_fst += f'''SampleName="{name_id}"\nSampleSize={n}\nSampleData= {{\n{name}\t''' + f"{n}\t" + row[loci_dict[loci][0]] + "\n" + "\t" + row[loci_dict[loci][1]] + "}\n\n"
         else:
             arp_content_h_l += f"{name}\t" + f"{n}\t" + '\t'.join(row[['A1','B1','C1','DRB1_1','DQB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','C2','DRB1_2','DQB1_2']]) + "\n"
