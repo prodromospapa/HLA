@@ -22,6 +22,7 @@ parser.add_argument('--plot','-p', action='store_true', help='Return plot')
 parser.add_argument('--ranking','-r', help='Dictionary with ranking (e.g. [[1,0.1],[0.1,0.05]])', required=True,type=str)
 parser.add_argument('--sort','-s', choices=['value','name'], help='Sort by value or name')
 parser.add_argument('--type','-t', choices=['allele','genotype'], help='Type of data to be saved', required=True)
+parser.add_argument('--dpi','-dpi' , type=int, help='DPI of the plot', default=500)
 
 args = parser.parse_args()
 
@@ -32,7 +33,7 @@ freq_per = pd.read_pickle(f"{args.choose}_{args.direction}_{args.type}_freq_per.
 if not os.path.exists('plots'):
         os.makedirs('plots')
 
-dpi = 500
+dpi = args.dpi
 def ranking_plot(plot,ranking_list,sort):
         for ranking in ranking_list:
                 #alleles
