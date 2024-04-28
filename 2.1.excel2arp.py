@@ -107,10 +107,11 @@ if loci == '3':
     if drop_double:
         counter_dict = dict(data[loci_list].value_counts())
         data = data.drop_duplicates(subset=loci_list)
+        name_d = "_d"
     arp_content_h_l, arp_content_fst = xl2arp(data)
-    with open(f'output_h_l_{loci}.arp', 'w') as arp_file:
+    with open(f'output/output_h_l_{loci}{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
-    with open(f'output_fst_{loci}.arp', 'w') as arp_file:
+    with open(f'output/output_amova_{loci}{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_fst)
 
 elif loci == '5':
@@ -120,10 +121,11 @@ elif loci == '5':
     if drop_double:
         counter_dict = dict(data[loci_list].value_counts())
         data = data.drop_duplicates(subset=loci_list)
+        name_d = "_d"
     arp_content_h_l, arp_content_fst = xl2arp(data)
-    with open(f'output_h_l_{loci}.arp', 'w') as arp_file:
+    with open(f'output/output_h_l_{loci}{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
-    with open(f'output_fst_{loci}.arp', 'w') as arp_file:
+    with open(f'output/output_amova_{loci}{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_fst)
 
 elif loci in ['A','B','C','DRB1','DQB1']:
@@ -132,11 +134,12 @@ elif loci in ['A','B','C','DRB1','DQB1']:
     if drop_double:
         counter_dict = dict(data[loci_dict[loci]].value_counts())
         data = data.drop_duplicates(subset=loci_dict[loci])
+        name_d = "_d"
     data = data.dropna()
     arp_content_h_l, arp_content_fst = xl2arp(data)
-    with open(f'output_h_l_{loci}.arp', 'w') as arp_file:
+    with open(f'output/output_h_l_{loci}{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
-    with open(f'output_fst_{loci}.arp', 'w') as arp_file:
+    with open(f'output/output_amova_{loci}{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_fst)
 else:
     loci_list = ["A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]
@@ -145,10 +148,11 @@ else:
     if drop_double:
         counter_dict = dict(data[loci_list].value_counts())
         data = data.drop_duplicates(subset=loci_list)
+        name_d = "_d"
     arp_content_h_l, arp_content_fst = xl2arp(data)
-    with open('output_h_l.arp', 'w') as arp_file:
+    with open(f'output/output_h_l{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_h_l)
-    with open('output_fst.arp', 'w') as arp_file:
+    with open(f'output/output_amova{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_fst)
 
 # python3 2.1.excel2arp.py -i all_original_unmerged.pickle -l 3
