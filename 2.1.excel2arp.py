@@ -13,7 +13,7 @@ def xl2arp(data):
         fst_n = len(counter_dict)
         pop_n = sum(counter_dict.values())
     else:
-        fst_n = len(data)
+        pop_n = fst_n = len(data)
         
     arp_content_fst += f'''
     NbSamples={fst_n}
