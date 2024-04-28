@@ -19,9 +19,6 @@ def LD(data): #replace
             #convert dictionary to dataframe
             df_pair = pd.DataFrame(pair_data).T
             df_pair.columns = ['LnLHood LD', 'LnLHood LE', 'Exact P', 'Chi-square test']
-            
-            #Exact P: [value, +- error, permutation]
-            #Chi-square test: [x2, p, df]
 
         elif data[i].startswith("Histogram of the number of linked loci per locus"):#same replace number with allele
             locus = data[i+2].split()[1:]
@@ -51,6 +48,7 @@ def HW(data):
         if data[i].startswith("---------------------"):
              borders.append(i)
     table = data[borders[1]+1:borders[2]]
+
     #text2table
     headers = ['Locus', '#Genot', 'Obs.Het.', 'Exp.Het.', 'P-value', 's.d.', 'Steps done']
     data = []
@@ -60,6 +58,7 @@ def HW(data):
     df = pd.DataFrame(data, columns=headers)  # Create a DataFrame from the data and headers
     df.set_index('Locus', inplace=True)
     #text2table
+
     return df
 
 def return_data(file_path,test):
@@ -67,31 +66,73 @@ def return_data(file_path,test):
         content = file.read()
     # This regex pattern looks for 'Reference' followed by any characters (non-greedy),
     # then 'data' and captures any characters until the next 'data'
-    pattern = re.compile(r'== Sample : 	([A-Za-z_]*?)\n.*?== .*? : .*?</Reference>\n<data>(.*?)</data>.*?</Reference>\n<data>(.*?)</data>', re.DOTALL)
+    pattern = re.compile(r'== Sample : 	(.*?)\n.*?== .*? : .*?</Reference>\n<data>(.*?)</data>.*?</Reference>\n<data>(.*?)</data>', re.DOTALL)
     # Find all non-overlapping matches of the regex pattern in the content
     matches = pattern.findall(content)
     # Extract the first value of each sublist as the key and the next two values as the values
-    xlsx_files = [sublist[0] for sublist in matches]
-    result_dict = [{"LD":[i.strip() for i in sublist[1].split("\n") if i!=""],"HWE":[i.strip() for i in sublist[2].split("\n") if i!=""]} for sublist in matches]
-    
-    #if multiple xlsx files are present in the output file then ask the user to select the file
-    xlsx = 0
-    if len(xlsx_files) > 1:
-        question = dict(zip(range(len(xlsx_files)),xlsx_files))
-        xlsx = int(input(f"Enter the xlsx file index {question}: "))
+    result_dict = {"LD":[i.strip() for i in matches[0][1].split("\n") if i!=""],"HWE":[i.strip() for i in matches[0][2].split("\n") if i!=""]}
+
 
     if test == "LD":
-        return LD(result_dict[xlsx]["LD"])
+        return LD(result_dict["LD"])
     elif test == "HWE":
-        return HW(result_dict[xlsx]["HWE"])    
+        return HW(result_dict["HWE"])    
+
+def parse_xml(xml_file):
+    import xml.etree.ElementTree as ET
     
+    # Parse the XML file
+    tree = ET.parse(xml_file)
+
+    # Get the root element
+    root = tree.getroot()
+    
+    # Access elements and attributes in the XML file
+    check = False
+    for element in root:
+        if "NAME" in element.attrib.keys():
+            check = element.attrib['NAME'].endswith("pop_Loc_by_Loc_AMOVA")
+        if element.tag == "data" and check:
+            input_text = element.text
+
+    # Define regular expressions for the sections to extract
+    amo = re.compile(r"AMOVA Results for polymorphic loci only:(.*?)Global AMOVA results as a weighted average over loci", re.DOTALL)
+    global_amo = re.compile(r"Global AMOVA results as a weighted average over loci(.*?)END OF RUN", re.DOTALL)
+
+    amo_results = amo.search(input_text).group(1).strip()
+    global_amo_results = global_amo.search(input_text).group(1).strip()
+
+    # Extract the data for each locus
+    per_locus = amo_results.split("\n")[4:-2]
+    header =  ["Locus", "SSD", "d.f.", "Va", "% variation", "SSD", "d.f.", "Vb", "% variation", "SSD", "d.f.", "Vc", "% variation", "FIS", "P-value", "FST", "P-value", "FIT", "P-value"]
+    df_per_locus = pd.DataFrame([i.split() for i in per_locus], columns=header)
+    df_per_locus.set_index("Locus", inplace=True)
+
+    # Extract the global AMOVA results
+    df_global_amo = pd.DataFrame(['Among populations','Among individuals within populations ','Withing populations',"Total"], columns=["Source of Variation"])
+    df_global_amo.set_index("Source of Variation", inplace=True)
+
+    header = ["Sum of Squares", "Variance Components", "% variation"]
+    df_global_amo[header] = pd.DataFrame([i.split()[1:] for i in global_amo_results.split("\n")[11:-28] if i.split()[1:]],index=df_global_amo.index)
+
+    # Extract the FST, FIT and FIS values
+    fst = {}
+    for item in global_amo_results.split("\n")[-23:-20]:
+        key, value = item.split(':')
+        fst[key.strip()] = float(value.strip())
+
+    return df_per_locus, df_global_amo, fst
 
 parser = argparse.ArgumentParser(
                     prog='ProgramName',
                     description='What the program does',
                     epilog='Text at the bottom of help')
 
-parser.add_argument('--test','-t',choices=["HWE","LD"], type=str, help='Test to include in the ARP file',required=True)
+parser.add_argument('--test','-t',choices=["HWE","LD","AMOVA"], type=str, help='Test to include in the ARP file',required=True)
+parser.add_argument('--file','-f', type=str, help='File to parse',required=True)
 args = parser.parse_args()
 
-pprint(return_data("output.res/output.xml",args.test))
+if args.test == "AMOVA":
+    pprint(parse_xml(args.file))
+else:
+    pprint(return_data(args.file,args.test))

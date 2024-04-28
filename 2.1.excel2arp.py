@@ -64,7 +64,7 @@ SampleData= {{
             name_id = name = f"{row['ID']}"
             n = 1
         structure += f'\t"{name_id}"\n'
-        if loci == 3:
+        if loci == '3':
             arp_content_h_l += f"{name}\t" + f"{n}\t" + '\t'.join(row[['A1','B1','DRB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','DRB1_2']]) + "\n"
             arp_content_fst += f'''SampleName="{name_id}"\nSampleSize={n}\nSampleData= {{\n{name}\t''' + f"{n}\t" + '\t'.join(row[['A1','B1','DRB1_1']]) + "\n" + "\t" + '\t'.join(row[['A2','B2','DRB1_2']]) + "}\n\n"
         elif loci in ['A','B','C','DRB1','DQB1']:
@@ -91,7 +91,7 @@ SampleData= {{
     return arp_content_h_l, arp_content_fst
     
 parser = argparse.ArgumentParser(description='Convert excel file to arlequin format')
-parser.add_argument('--input','-i', type=str, help='Input excel file')
+parser.add_argument('--input','-i',default="all_original_unmerged.pickle", type=str, help='Input excel file',required=False)
 parser.add_argument('--loci','-l', type=str,choices=['3','5','A','B','C','DRB1','DQB1','all'], help='Number of loci')
 parser.add_argument('--drop_double','-d', action='store_true', help='Drop double entries')
 
