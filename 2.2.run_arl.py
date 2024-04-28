@@ -1,9 +1,16 @@
 import argparse
 import os
 
+def permutation_type(x):
+    x = int(x)
+    if x < 1:
+        raise argparse.ArgumentTypeError("Minimum permutation value is 1")
+    return x
+
+
 parser = argparse.ArgumentParser(description='ARP file generator')
 parser.add_argument('--test','-t', choices=["AMOVA","HL"] ,type=str, help='Type of test',required=True)
-parser.add_argument('--permutation','-p', type=int, help='Number of permutations',required=True)
+parser.add_argument('--permutation','-p', type=permutation_type, help='Number of permutations',required=True)
 parser.add_argument('--loci','-l', type=str,choices=['3','5','A','B','C','DRB1','DQB1','all'], help='Number of loci',required=True)
 parser.add_argument('--drop_double','-d', action='store_true', help='Drop double entries')
 
