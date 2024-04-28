@@ -86,8 +86,4 @@ def ranking_plot(plot,ranking_list,sort):
 
 ranking_plot(args.plot,eval(args.ranking),args.sort)
 
-#python3 helen_ranking_alleles.py -c CBU -d HvG -p -s value -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
-#python3 helen_ranking_alleles.py -c CBU -d HvG -p -s name -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
-
-#python3 helen_ranking_alleles.py -c CBU -d HvG -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
-#python3 helen_ranking_alleles.py -c CBU -d HvG -r [[1,0.1],[0.1,0.05],[0.05,0.01],[0.01,0.001],[0.001,0]]
+# python3 1.3.3.mm_ranking.py -c CBU - HvG -p -r "[[1,0.1],[0.1,0.05]]" - sort value
