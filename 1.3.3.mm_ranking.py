@@ -97,3 +97,5 @@ def ranking_plot(plot,ranking_list,sort):
 ranking_plot(args.plot,eval(args.ranking),args.sort)
 
 # python3 1.3.3.mm_ranking.py -c CBU -d HvG -p -r "[[1,0.1],[0.1,0.05]]" -s value -t genotype
+
+#a[a.DRB1.apply(lambda x: '13:79' in x)]
