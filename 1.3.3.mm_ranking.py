@@ -36,7 +36,9 @@ dpi = args.dpi
 def ranking_plot(plot,ranking_list,sort):
         for ranking in ranking_list:
                 values = mm_per[freq_per<ranking[0]][freq_per >=ranking[1]].dropna(how="all")
-                if not values.empty:
+                if values.empty:
+                        print(f"{ranking}: No data")
+                else:
                         #alleles
                         ranking_values_list = [[x[0]+"_"+base.name,x[1]] for index,base in values.iterrows() if base.dropna().values.all() for x in base.dropna().items()]
                         sort_way = 0 if sort == "name" else 1
