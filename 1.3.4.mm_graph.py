@@ -1,6 +1,7 @@
 import pandas as pd
 import argparse
 import matplotlib.pyplot as plt
+import os
 
 parser = argparse.ArgumentParser(
                     prog='ProgramName',
@@ -15,6 +16,10 @@ args = parser.parse_args()
 mm_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_mm_per.pickle")
 al_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_al_per.pickle")
 
+# Create 'plots' folder if it doesn't exist
+if not os.path.exists('plots'):
+        os.makedirs('plots')
+
 for base in ["A","B","C","DRB1","DQB1"]:
     mm_per = mm_per_df[base].dropna()
     al_per = al_per_df[base].reindex(mm_per.index).sort_values(ascending=False)
@@ -28,7 +33,7 @@ for base in ["A","B","C","DRB1","DQB1"]:
     plt.xticks(range(len(mm_per)),mm_per.index,rotation=90)
     plt.title(f"{args.choose}_{args.direction}_{base}")
     plt.tight_layout()
-    plt.savefig(f"{args.choose}_{args.direction}_{base}_sorted.png",dpi=300)
+    plt.savefig(f"plots/{args.choose}_{args.direction}_{base}_sorted.png",dpi=300)
     plt.close()
 
 #python3 helen_graph.py -c CBU -d HvG
