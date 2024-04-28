@@ -128,10 +128,19 @@ parser = argparse.ArgumentParser(
                     epilog='Text at the bottom of help')
 
 parser.add_argument('--test','-t',choices=["HWE","LD","AMOVA"], type=str, help='Test to include in the ARP file',required=True)
-parser.add_argument('--file','-f', type=str, help='File to parse',required=True)
+parser.add_argument('--loci','-l', type=str,choices=['3','5','A','B','C','DRB1','DQB1','all'], help='Number of loci',required=True)
+parser.add_argument('--drop_double','-d', action='store_true', help='Drop double entries')
+
 args = parser.parse_args()
 
-if args.test == "AMOVA":
-    pprint(parse_xml(args.file))
+if args.drop_double:
+    add = "_no_d"
 else:
-    pprint(return_data(args.file,args.test))
+    add = ""
+
+if args.test == "AMOVA":
+    file = f"output/output_amova_{args.loci}{add}.res/output_amova_{args.loci}{add}.xml"
+    pprint(parse_xml(file))
+else:
+    file = f"output/output_h_l_{args.loci}{add}.res/output_h_l_{args.loci}{add}.xml"
+    pprint(return_data(file,args.test))
