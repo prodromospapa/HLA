@@ -161,8 +161,4 @@ else:
     with open(f'output/output_amova{name_d}.arp', 'w') as arp_file:
         arp_file.write(arp_content_fst)
 
-# python3 2.1.excel2arp.py -i all_original_unmerged.pickle -l 3
-# python3 2.1.excel2arp.py -i all_original_unmerged.pickle -l 5 -d
-
-#chmod +x arlecore3522_64bit
-#bash arlecore_linux/LaunchArlecore.sh output_fst.arp
+# python3 2.1.excel2arp.py -i all_original_unmerged.pickle -l 3 -d

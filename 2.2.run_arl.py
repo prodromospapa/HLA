@@ -21,3 +21,4 @@ elif args.test == "AMOVA":
 os.system(f"bash arlecore_linux/LaunchArlecore.sh {input_text}")
 
 # python3 2.2.run_arl.py -t HL -p 10 -l 3 -d
+#chmod +x arlecore_linux/arlecore3522_64bit
