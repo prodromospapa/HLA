@@ -19,3 +19,5 @@ elif args.test == "AMOVA":
     input_text = f"output/output_amova_{args.loci}{add}.arp {args.permutation} {args.test}"
 
 os.system(f"bash arlecore_linux/LaunchArlecore.sh {input_text}")
+
+# python3 2.2.run_arl.py -t HL -p 10 -l 3 -d

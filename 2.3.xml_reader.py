@@ -145,4 +145,4 @@ else:
     file = f"output/output_h_l_{args.loci}{add}.res/output_h_l_{args.loci}{add}.xml"
     pprint(return_data(file,args.test))
 
-# python3 2.2.xml_reader.py -t AMOVA -l 5 -d
+# python3 2.2.xml_reader.py -t AMOVA -l 3 -d
