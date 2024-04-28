@@ -15,8 +15,12 @@ else:
 
 if args.test == "HL":
     input_text = f"output/output_h_l_{args.loci}{add}.arp {args.permutation} {args.test}"
+    if os.path.exists(f"output/output_h_l_{args.loci}{add}"):
+        os.rmdir(f"output/output_h_l_{args.loci}{add}")
 elif args.test == "AMOVA":
     input_text = f"output/output_amova_{args.loci}{add}.arp {args.permutation} {args.test}"
+    if os.path.exists(f"output/output_amova_{args.loci}{add}"):
+        os.rmdir(f"output/output_amova_{args.loci}{add}")
 
 os.system(f"bash arlecore_linux/LaunchArlecore.sh {input_text}")
 
