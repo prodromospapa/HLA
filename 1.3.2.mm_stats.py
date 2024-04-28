@@ -76,4 +76,4 @@ freq_per_df = pd.DataFrame(freq_per).reindex(mm_per_df.index)
 mm_per_df.to_pickle(f"{args.choose}_{args.direction}_{args.type}_mm_per.pickle")
 freq_per_df.to_pickle(f"{args.choose}_{args.direction}_{args.type}_freq_per.pickle")
 
-#python3 helen.py -c CBU -d HvG
+#python3 1.3.2.mm_stats.py -c CBU -d HvG -t allele

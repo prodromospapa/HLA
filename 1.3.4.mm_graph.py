@@ -42,4 +42,4 @@ for base in ["A","B","C","DRB1","DQB1"]:
     plt.savefig(f"plots/{args.choose}_{args.direction}_{base}_{args.type}_sorted.png",dpi=300)
     plt.close()
 
-#python3 1.3.4.mm_graph.py -c CBU -d HvG
+#python3 1.3.4.mm_graph.py -c CBU -d HvG -t allele
