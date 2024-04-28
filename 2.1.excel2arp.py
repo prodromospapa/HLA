@@ -11,8 +11,10 @@ def xl2arp(data):
 
     if drop_double:
         fst_n = len(counter_dict)
+        pop_n = sum(counter_dict.values())
     else:
         fst_n = len(data)
+        
     arp_content_fst += f'''
     NbSamples={fst_n}
     GenotypicData=1
@@ -44,7 +46,7 @@ def xl2arp(data):
 
 '''
     arp_content_h_l += f'''SampleName="Greece"
-SampleSize={len(data)}
+SampleSize={pop_n}
 SampleData= {{
 '''
 
