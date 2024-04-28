@@ -10,11 +10,12 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('--choose','-c', choices=['BMD','CBU','all'],type=str, help='Direction(GvH or HvG)', required=True)
 parser.add_argument('--direction','-d', choices=['GvH','HvG'], help='Direction(GvH or HvG)', required=True)
+parser.add_argument('--type','-t', choices=['allele','genotype'], help='Type of data to be saved', required=True)
 
 args = parser.parse_args()
 
-mm_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_allele_mm_per.pickle")
-al_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_allele_freq_per.pickle")
+mm_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_{args.type}_mm_per.pickle")
+al_per_df = pd.read_pickle(f"{args.choose}_{args.direction}_{args.type}_freq_per.pickle")
 
 # Create 'plots' folder if it doesn't exist
 if not os.path.exists('plots'):
@@ -30,10 +31,10 @@ for base in ["A","B","C","DRB1","DQB1"]:
     plt.bar(mm_per.index,al_per.tolist(),color="black",alpha=0.5)
     plt.legend(["0","1","2","Allele Frequency"])
     plt.rcParams['xtick.labelsize'] = 6
-    plt.xticks(range(len(mm_per)),mm_per.index,rotation=90)
+    plt.xticks(range(len(mm_per)),mm_per.index,rotation=90,fontsize=1)
     plt.title(f"{args.choose}_{args.direction}_{base}")
     plt.tight_layout()
-    plt.savefig(f"plots/{args.choose}_{args.direction}_{base}_sorted.png",dpi=300)
+    plt.savefig(f"plots/{args.choose}_{args.direction}_{base}_{args.type}_sorted.png",dpi=1000)
     plt.close()
 
-#python3 helen_graph.py -c CBU -d HvG
+#python3 1.3.4.mm_graph.py -c CBU -d HvG
