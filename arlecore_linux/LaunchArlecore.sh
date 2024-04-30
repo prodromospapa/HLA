@@ -3,7 +3,7 @@ arlecore=arlecore_linux/arlecore3522_64bit
 file=$1
 permutation=$2
 if [ "$3" = "HL" ]; then
-    python3 ars_file.py -t HL -p $permutation
+    python3 ars_file.py -t HL
 elif [ "$3" = "AMOVA" ]; then
     python3 ars_file.py -t AMOVA -p $permutation
 fi
