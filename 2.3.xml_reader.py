@@ -40,7 +40,9 @@ def AMOVA(input_text):
     print(df_per_locus, df_global_amo, fst)
     return df_per_locus, df_global_amo, fst
 
-#def LD(element):
+def LD(element):
+
+    pass
 
 parser = argparse.ArgumentParser(
                     prog='ProgramName',
@@ -48,7 +50,7 @@ parser = argparse.ArgumentParser(
                     epilog='Text at the bottom of help')
 
 parser.add_argument('--test','-t',choices=["HWE","LD","AMOVA"], type=str, help='Test to include in the ARP file',required=True)
-parser.add_argument('--loci','-l', type=str,choices=['3','5','A','B','C','DRB1','DQB1','all'], help='Number of loci',required=True)
+parser.add_argument('--loci','-l', type=str,choices=['3','5','all'], help='Number of loci',required=True)
 
 args = parser.parse_args()
 
@@ -63,6 +65,7 @@ tree = ET.parse(file)
 # Get the root element
 root = tree.getroot()
 # Access elements and attributes in the XML file
+check =""
 for element in root:
     if args.test == "HWE":
         if element.tag == "data":
@@ -72,11 +75,11 @@ for element in root:
     elif args.test == "AMOVA":
         if "NAME" in element.attrib.keys():
             check = element.attrib['NAME'].endswith("pop_Loc_by_Loc_AMOVA")
-            if element.tag == "data" and check:
-                input_text = element.text
-                AMOVA(input_text)
+        if element.tag == "data" and check:
+            input_text = element.text
+            AMOVA(input_text)
     elif args.test == "LD":
         if element.tag=="data":
             data = element.text.strip().split("\n")
             if data[0].startswith("Test of linkage disequilibrium for all pairs of loci:"):
-                print(data)
+                LD(data[9:-4])
