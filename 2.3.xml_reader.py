@@ -215,18 +215,19 @@ if args.test == "AMOVA":
 
 else:
     banks = list(info.keys())[:-1]
-    #bank = input("Choose a bank: " + ", ".join(banks) + "\n")
+    bank = input("Choose a bank: " + ", ".join(banks) + "\n")
     if args.test == "HWE":
         hwe = HWE(info[bank]["HWE"])
         #print(hwe)
     elif args.test == "LD":
-        for bank in banks:
-            pair_dict, basic_stats = LD(info[bank]["LD"])
-            pairs = pair_dict.keys()
-            for pair in pairs:
-                table = pair_dict[pair]["Table of standardized disequilibrium values (D'=D/Dmax)"]
-                heatmap(table,pair,bank)
+        pair_dict, basic_stats = LD(info[bank]["LD"])
+        #for bank in banks:
+        #    pair_dict, basic_stats = LD(info[bank]["LD"])
+        #    pairs = pair_dict.keys()
+        #    for pair in pairs:
+        #        table = pair_dict[pair]["Table of standardized disequilibrium values (D'=D/Dmax)"]
+        #        heatmap(table,pair,bank)
         #pprint(pair_dict)
-        #pprint(basic_stats)
+        print(basic_stats)
 
     

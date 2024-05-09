@@ -18,7 +18,7 @@ def xl2arp(data):
     GenotypicData=1'''
     
     if args.database == "Greece":
-        arp_content += "\n  GameticPhase=0\n"
+        arp_content += "\n    GameticPhase=0\n"
     else:
         arp_content += "\n    GameticPhase=1\n"
 

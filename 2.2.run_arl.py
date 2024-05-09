@@ -26,7 +26,7 @@ else:
     input_text = f"output/output_dkms{total}.arp"
 
 
-os.system(f"bash arlecore_linux/LaunchArlecore.sh {input_text}")
+os.system(f"bash arlecore_linux/LaunchArlecore.sh {input_text} POP")
 
 # python3 2.2.run_arl.py -t HL -p 10 -l 3
 #chmod +x arlecore_linux/arlecore3522_64bit
