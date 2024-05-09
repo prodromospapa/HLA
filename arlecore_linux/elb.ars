@@ -28,7 +28,7 @@
 #GENOTYPE ASSIGNMENT TEST: +32768
 #MANTEL TEST: +65536
 
-TaskNumber=0
+TaskNumber=8
 #----------------------------------------------------------------------------
 
 #----------------
@@ -274,7 +274,7 @@ MismatchSpatialExpNumParams=3
 
 #ComputeAllHaplotypesEM controls if we need to estimate haplotype frequencies through the EM algorithm
 
-ComputeAllHaplotypesEM=0
+ComputeAllHaplotypesEM=1
 
 #ComputeAllAllelesEM controls if we need to estimate all allele frequencies with the EM algorithm
 #The EM algorithm is here mostly useful if there are recessive alleles
@@ -364,7 +364,7 @@ EMNumZipRandOrders=0
 #GibbsInferGamPhase controls if we estimate individual gametic phase and haplotype frequencies
 #via the pseudo-Gibbs sampling implemented in the ELB algorithm
 
-GibbsInferGamPhase=0
+GibbsInferGamPhase=1
 
 #GibbsBurnIn defines the number of the Gibbs steps in the burnin
 
@@ -412,7 +412,7 @@ GibbsPercentageOfRecSteps=0.000000
 #GibbsOutputGamPhase controls if we output individual gametic phases in *.arp files 
 #for every sample of the ELB algorithm
 
-GibbsOutputGamPhase=0
+GibbsOutputGamPhase=1
 
 #------------------
 #SETTINGS FOR AMOVA

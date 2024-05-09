@@ -9,22 +9,22 @@ def permutation_type(x):
 
 
 parser = argparse.ArgumentParser(description='ARP file generator')
-parser.add_argument('--test','-t', choices=["AMOVA","HL"] ,type=str, help='Type of test',required=True)
-parser.add_argument('--permutation','-p', type=permutation_type, help='Number of permutations for AMOVA',required="-t"=="AMOVA")
-parser.add_argument('--loci','-l', type=str,choices=['3','5','all'], help='Number of loci',required=True)
+parser.add_argument('--database','-d', type=str,choices=["Greece","DKMS"], help='database to use', required=True)
+parser.add_argument('--loci','-l', type=str,choices=['3','5'], help='Number of loci',required='-d'=="Greece")
+parser.add_argument('--total','-to', action='store_true', help='Total of database', required=False)
 
 args = parser.parse_args()
-if args.permutation == None and args.test == "AMOVA":
-    raise argparse.ArgumentTypeError("the following arguments are required: --permutation/-p")
 
-if args.test == "HL":
-    input_text = f"output/output_h_l_{args.loci}.arp {args.permutation} {args.test}"
-    if os.path.exists(f"output/output_h_l_{args.loci}"):
-        os.rmdir(f"output/output_h_l_{args.loci}")
-elif args.test == "AMOVA":
-    input_text = f"output/output_amova_{args.loci}.arp {args.permutation} {args.test}"
-    if os.path.exists(f"output/output_amova_{args.loci}"):
-        os.rmdir(f"output/output_amova_{args.loci}")
+if args.total:
+    total = "_total"
+else:
+    total = ""
+
+if args.database == "Greece":
+    input_text = f"output/output_{args.loci}{total}.arp"
+else:
+    input_text = f"output/output_dkms{total}.arp"
+
 
 os.system(f"bash arlecore_linux/LaunchArlecore.sh {input_text}")
 

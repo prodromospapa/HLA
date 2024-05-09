@@ -9,7 +9,7 @@ def merge1(part):
     part = list(part[1])
     if part:
         counter = 0
-        final_dict = {"ID":[],"type":[],"loci":[],"generation":[],"A1":[],"A2":[],"B1":[],"B2":[],"C1":[],"C2":[],"DRB1_1":[],"DRB1_2":[],"DQB1_1":[],"DQB1_2":[]}
+        final_dict = {"ID":[],"type":[],"loci":[],"generation":[],"bank":[],"A1":[],"A2":[],"B1":[],"B2":[],"C1":[],"C2":[],"DRB1_1":[],"DRB1_2":[],"DQB1_1":[],"DQB1_2":[]}
         for index,row in data.iloc[part].iterrows():
             counter+=1
             loci_3 = ['A1', 'A2', 'B1', 'B2', 'DRB1_1', 'DRB1_2']
@@ -32,6 +32,7 @@ def merge1(part):
 
                 final_dict["ID"].append(row["ID"])
                 final_dict["generation"].append(row["GENERATION"])
+                final_dict["bank"].append(row["BANK"])
                 if row['TYPE'] == 'MD':
                     final_dict["type"].append('BMD')
                 else:
@@ -77,11 +78,12 @@ parser.add_argument('--threads','-t', type=int, help='Number of threads to use',
 
 args = parser.parse_args()
 
-
 file = "data/Extra_Analyses_Greek_CBUs_BMDs_80804_noD_no124.xlsx"
-data = pd.read_excel(file)[['ID','TYPE','GENERATION','A1_GROUPED','A2_GROUPED','B1_GROUPED','B2_GROUPED','C1_GROUPED','C2_GROUPED','DRB1_1_GROUPED','DRB1_2_GROUPED','DQB1_1_GROUPED','DQB1_2_GROUPED']]
-data.columns = ['ID',"TYPE",'GENERATION','A1','A2','B1','B2','C1','C2','DRB1_1','DRB1_2','DQB1_1','DQB1_2']
+data = pd.read_excel(file)[['ID','TYPE','GENERATION','BANK','A1_GROUPED','A2_GROUPED','B1_GROUPED','B2_GROUPED','C1_GROUPED','C2_GROUPED','DRB1_1_GROUPED','DRB1_2_GROUPED','DQB1_1_GROUPED','DQB1_2_GROUPED']]
+data.columns = ['ID',"TYPE",'GENERATION','BANK','A1','A2','B1','B2','C1','C2','DRB1_1','DRB1_2','DQB1_1','DQB1_2']
 
 final = run(args.threads)
 final.reset_index().to_pickle("all_original_unmerged.pickle")
 merge2(final)
+
+    

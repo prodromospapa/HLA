@@ -1,17 +1,14 @@
 arlecore=arlecore_linux/arlecore3522_64bit
 
 file=$1
-permutation=$2
-if [ "$3" = "HL" ]; then
-    python3 ars_file.py -t HL
-elif [ "$3" = "AMOVA" ]; then
-    python3 ars_file.py -t AMOVA -p $permutation
+
+if [ ! -f $file ]; then
+    echo "File $file does not exist"
+    exit 1
 fi
-
-settingsFile=arlecore_linux/output.ars
-
 echo "Processing file $file"
 
+settingsFile=arlecore_linux/popgen.ars
 ./$arlecore $file $settingsFile
 
 rm -f arl_run.txt
