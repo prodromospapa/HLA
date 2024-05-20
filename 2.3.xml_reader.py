@@ -210,8 +210,9 @@ def heatmap(table,pair,bank):
 
 if args.test == "AMOVA":
     loci,pop = AMOVA(info["AMOVA"])
-    #pprint(loci)
-    #pprint(pop)
+    #print(loci[-1]["FST"])
+    print(loci)
+    #print(pop)
 
 else:
     banks = list(info.keys())[:-1]
@@ -224,18 +225,26 @@ else:
         print(hwe)
     elif args.test == "LD":
         pair_dict, basic_stats = LD(info[bank]["LD"])
-        pair = ["A_02:01","DQB1_03:01"]
-        loci_dict = {"A":0,"B":1,"C":2,"DRB1":3,"DQB1":4}
-        pair = sorted([loci_dict.split("_")[0][i] for i in pair])
-        key = f"Loci {pair[0]} and {pair[1]}"
+        pair = ["DRB1_07:01","A_26:01"]
+        if args.database == "Greece" and args.loci == "3":
+            loci_dict = {"A":0,"B":1,"DRB1":2}
+        else:
+            loci_dict = {"A":0,"B":1,"C":2,"DRB1":3,"DQB1":4}
+        pair = sorted(pair,key=lambda x : loci_dict[x.split("_")[0]])
+        numbers = [loci_dict[i.split("_")[0]] for i in pair]
+        loci_id = [i.split("_")[1] for i in pair]
+        key = f"Loci {numbers[0]} and {numbers[1]}"
         print(key)
+        #print(key)
         #for bank in banks:
         #    pair_dict, basic_stats = LD(info[bank]["LD"])
         #    pairs = pair_dict.keys()
         #    for pair in pairs:
         #        table = pair_dict[pair]["Table of standardized disequilibrium values (D'=D/Dmax)"]
         #        heatmap(table,pair,bank)
-        print(pair_dict[key]["Table of standardized disequilibrium values (D'=D/Dmax)"])
-        print(basic_stats)
+        print(pair_dict[key]["Table of standardized disequilibrium values (D'=D/Dmax)"].loc[loci_id[0],loci_id[1]])
+        print(pair_dict[key]['Table of Chi-square P values (1 d.f.)'].loc[loci_id[0],loci_id[1]])
+        print(max(pair_dict[key]["Table of standardized disequilibrium values (D'=D/Dmax)"].max()))
+        #print(basic_stats)
 
     

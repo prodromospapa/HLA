@@ -12,6 +12,10 @@ if [ "$parameter" == "POP" ]; then
     settingsFile=arlecore_linux/popgen.ars
 elif [ "$parameter" == "ELB" ]; then
     settingsFile=arlecore_linux/elb.ars
+elif [ "$parameter" == "BOOT" ]; then
+    settingsFile=arlecore_linux/bootstrap.ars
+elif [ "$parameter" == "FREQ" ]; then
+    settingsFile=arlecore_linux/haplotype_freq.ars
 fi
 
 
