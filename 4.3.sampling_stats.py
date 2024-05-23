@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import argparse
 import os
-from pprint import pprint
+from multiprocessing import Pool
 
 
 def HWE(data):
@@ -21,70 +21,81 @@ def AMOVA(input_text):
     data = input_text.split("\n\n")[2].split("\n")
     header = re.split(r'\s{2,}', data[3])[1:]
     df = pd.DataFrame([i.split() for i in data[5:-1]], columns=header)
-    df = df.set_index("Locus")
-    fis = df["Average FIS"].astype(float)
-    average_p_value = fis.mean()
-    return average_p_value
-
+    fis = df.iloc[:,2:].astype(float)
+    average = np.array(fis.mean().tolist())
+    return average
 
 def run_arl(input_text):
-    os.system(f"bash arlecore_linux/LaunchArlecore.sh {input_text} BOOT")
+    os.system(f"bash arlecore_linux/LaunchArlecore.sh {input_text} BOOT > /dev/null")
 
-def read_stats(file,obs):
+def read_stats(file):
     tree = ET.parse(file)
     root = tree.getroot()
-    info = {}
+    hwe = np.array([])
     for i in range(len(root)):
         if "NAME" in root[i].attrib.keys():
             if (root[i+1].tag == "data") and "group" in root[i].attrib['NAME']:
-                name = re.search(r"Sample\s*:\s*(\w+)", root[i+1].text).group(1)
-                if obs:
-                    info["HWE"] = root[i+8].text
-                else:
-                    info["HWE"] = root[i+4].text
+                input_text = root[i+4].text
+                hwe = np.append(hwe,HWE(input_text))
             elif (root[i+1].tag == "data"):
                 if root[i].attrib["NAME"].endswith("comp_sum_LBL_POP_AMOVA_FIS"):
-                    info["AMOVA"] = root[i+1].text
-    hwe = HWE(info["HWE"])
-    fst = AMOVA(info["AMOVA"])
+                    fst_input = root[i+1].text
+    fst = AMOVA(fst_input)
     return hwe, fst
 
+def run(threads,bootstrap_folders):  # Number of equal parts
+    partitions = list(zip(range(threads),np.array_split(bootstrap_folders, threads)))
+    p = Pool(processes=threads)
+    return_data = p.map(stats, partitions)
+    p.close()
+    df = pd.concat(return_data)
+    return df.sort_index()
+
+def stats(partition):
+    part, bootstraps_folders = partition
+    df = pd.DataFrame(columns=["HWE","FST"],index=[int(i.split("_")[-1]) for i in bootstraps_folders])
+    counter = 0
+    total = len(bootstraps_folders)*sum([1 for i in os.listdir(f"bootstrap/bootstrap_{args.loci}/{bootstraps_folders[0]}") if i.endswith(".arp")])
+    for bootstrap in bootstraps_folders:
+        folder = f"bootstrap/bootstrap_{args.loci}/{bootstrap}" 
+        bootstrap_n = int(bootstrap.split("_")[-1])
+        hwe_list = []
+        fst_list = []
+        for file in os.listdir(folder):
+            if file.endswith(".arp"):     
+                file_dir = folder+"/"+file
+                xml = file_dir.replace(".arp",".res")+f"/{file.replace('.arp','')}.xml"
+                if not os.path.isfile(xml):
+                    run_arl(file_dir)
+                try:
+                    hwe, fst = read_stats(xml)
+                except Exception:
+                    run_arl(file_dir)
+                hwe_list = np.append(hwe > obs_hwe,hwe_list)
+                fst_list = np.append(fst > obs_fst,fst_list)
+                if part == 0:
+                    counter += 1
+                    print(f"{counter}/{total}",end="\r")
+        df.loc[bootstrap_n] = [sum(hwe_list)/len(hwe_list),sum(fst_list)/len(fst_list)] 
+    return df
+
 parser = argparse.ArgumentParser(description='ARP file generator')
-parser.add_argument('--database','-d', type=str,choices=["Greece","DKMS"], help='database to use', required=True)
-parser.add_argument('--loci','-l', type=str,choices=['3','5'], help='Number of loci',required='-d'=="Greece")
-parser.add_argument('--total','-to', action='store_true', help='Total of database', required=False)
+parser.add_argument('--loci','-l', type=str,choices=['3','5'], help='Number of loci',required=True)
+parser.add_argument('--threads','-t', type=int, help='Number of threads',required=True)
+
 
 args = parser.parse_args()
 
-if args.total:
-    total = "_total"
-else:
-    total = ""
 
 #observed
-obs_xml = f"output/output_{args.loci}{total}.res/output_{args.loci}{total}.xml"
-obs_hwe, obs_fst = read_stats(obs_xml,True)
+run_arl(f"bootstrap/bootstrap_{args.loci}.arp")
+obs_hwe, obs_fst = read_stats(f"bootstrap/bootstrap_{args.loci}.res/bootstrap_{args.loci}.xml")
 
 
-folder = f"bootstrap/bootstrap_{args.loci}{total}"
-info = {}
-files =[i for i in os.listdir(folder) if i.endswith(".arp")]
-total = len(files)
-counter = 0
-for file in files:
-    counter += 1
-    info[counter] = {"HWE":[],"FIS":[]}
-    file_dir = folder+"/"+file
-    xml = file_dir.replace(".arp",".res")+f"/{file.replace('.arp','')}.xml"
-    if not os.path.isfile(xml):
-        run_arl(file_dir)
-    try:
-        hwe, fst = read_stats(xml,False)
-    except Exception:
-        run_arl(file_dir)
-    info[counter]["HWE"].append(hwe)
-    info[counter]["FIS"].append(fst)
-    print(f"{counter}/{total}",end="\r")
-print(info)
+bootstraps_folders =[i for i in os.listdir(f"bootstrap/bootstrap_{args.loci}")]
+df = run(args.threads,bootstraps_folders)
+df.index.name = "Bootstrap"
+print(df)
+
 
 

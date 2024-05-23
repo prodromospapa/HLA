@@ -5,6 +5,8 @@ import re
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
+from statsmodels.stats.multitest import multipletests
+
 
 def HWE(data):
     headers = ['Locus', '#Genot', 'Obs.Het.', 'Exp.Het.', 'P-value', 's.d.', 'Steps done']
@@ -212,30 +214,51 @@ if args.test == "AMOVA":
     loci,pop = AMOVA(info["AMOVA"])
     #print(loci[-1]["FST"])
     print(loci)
-    #print(pop)
-
+    print(pop)
+    #pop["pop"].to_excel(f"helen/amova_{args.loci}{total}.xlsx")
 else:
     banks = list(info.keys())[:-1]
-    if len(banks)>1:
+    '''if len(banks)>1:
         bank = input("Choose a bank: " + ", ".join(banks) + "\n")
     else:
-        bank = banks[0]
+        bank = banks[0]'''
     if args.test == "HWE":
         hwe = HWE(info[bank]["HWE"])
         print(hwe)
+        '''for bank in banks:
+            hwe = HWE(info[bank]["HWE"])
+            hwe.to_excel(f"helen/hwe_{args.loci}{total}_{bank}.xlsx")'''
     elif args.test == "LD":
-        pair_dict, basic_stats = LD(info[bank]["LD"])
-        pair = ["DRB1_07:01","A_26:01"]
-        if args.database == "Greece" and args.loci == "3":
-            loci_dict = {"A":0,"B":1,"DRB1":2}
-        else:
-            loci_dict = {"A":0,"B":1,"C":2,"DRB1":3,"DQB1":4}
-        pair = sorted(pair,key=lambda x : loci_dict[x.split("_")[0]])
+        for bank in banks:
+            pair_dict, basic_stats = LD(info[bank]["LD"])
+
+            #print(basic_stats)
+            #pair = ["DRB1_07:01","A_26:01"]
+            if args.database == "Greece" and args.loci == "3":
+                #loci_dict = {"A":0,"B":1,"DRB1":2}
+                loci_dict = {"0":"A","1":"B","2":"DRB1"}
+            else:
+                #loci_dict = {"A":0,"B":1,"C":2,"DRB1":3,"DQB1":4}
+                loci_dict = {"0":"A","1":"B","2":"C","3":"DRB1","4":"DQB1"}
+            basic_stats["p_values"].to_excel(f"helen/ld_p_values_{args.loci}{total}_{bank}.xlsx")
+            '''for key in pair_dict.keys():
+                    d = pair_dict[key]["Table of standardized disequilibrium values (D'=D/Dmax)"]
+                    p = pair_dict[key]['Table of Chi-square P values (1 d.f.)']
+                    p_corrected = multipletests(p.values.flatten(), method='fdr_bh')[1].reshape(p.shape)
+                    p = pd.DataFrame(p_corrected, index=p.index, columns=p.columns)
+                    loci_1 = loci_dict[key.split(" ")[1]] 
+                    loci_2 = loci_dict[key.split(" ")[3]]
+                    # Create an Excel file with two sheets
+                    with pd.ExcelWriter(f'helen/ld__{args.loci}{total}_{bank}_{loci_1}_{loci_2}.xlsx') as writer:
+                        d.to_excel(writer, sheet_name=f"D'")
+                        p.to_excel(writer, sheet_name=f'corrected P_values')'''
+
+        '''pair = sorted(pair,key=lambda x : loci_dict[x.split("_")[0]])
         numbers = [loci_dict[i.split("_")[0]] for i in pair]
         loci_id = [i.split("_")[1] for i in pair]
         key = f"Loci {numbers[0]} and {numbers[1]}"
         print(key)
-        #print(key)
+        print(key)
         #for bank in banks:
         #    pair_dict, basic_stats = LD(info[bank]["LD"])
         #    pairs = pair_dict.keys()
@@ -245,6 +268,6 @@ else:
         print(pair_dict[key]["Table of standardized disequilibrium values (D'=D/Dmax)"].loc[loci_id[0],loci_id[1]])
         print(pair_dict[key]['Table of Chi-square P values (1 d.f.)'].loc[loci_id[0],loci_id[1]])
         print(max(pair_dict[key]["Table of standardized disequilibrium values (D'=D/Dmax)"].max()))
-        #print(basic_stats)
+        #print(basic_stats)'''
 
     

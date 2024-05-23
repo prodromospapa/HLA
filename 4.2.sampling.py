@@ -4,16 +4,14 @@ import numpy as np
 import pandas as pd
 import argparse
 import os
+from multiprocessing import Pool
 
 def freq(xml):
     tree = ET.parse(xml)
     root = tree.getroot()
-    info = {}   
-    header = ["No.","Freq.","s.d.","Haplotype"]
     for i in range(len(root)):
         my_key = root[i].attrib
         if ("NAME" in my_key.keys()) and ("group" in my_key['NAME']):
-            name = re.search(r"Sample\s*:\s*(\w+)", root[i+1].text).group(1)
             data = root[i+7].text.split("\n")
             final = []
             for d in data:
@@ -21,46 +19,23 @@ def freq(xml):
                     text = d.strip()
                     if text[0].isnumeric():
                         text = text.split("  ")
-                        del text[3]
-                        text[3] = text[3][1:]
-                        final.append(text)
-            df = pd.DataFrame(final,columns=header)
-            df.set_index("No.",inplace=True)
-            info[name] = df
-    return info
+                        final.append([float(text[1]),text[4]])
+    final = pd.DataFrame(final,columns=["Freq.","Haplotype"])
+    final["Freq."] = [i/sum(final["Freq."]) for i in final["Freq."]]
+    return final
 
 def bootstrap(samples,population_n):
-    weights = np.array(samples["Freq."].astype(float))
-    weights = [i/sum(weights) for i in weights]
+    weights = np.array(samples["Freq."])
     hapl = np.array(samples["Haplotype"])
     data = np.random.choice(hapl, 2*population_n, p=weights, replace=True)
     data = [data[i:i+2] for i in range(0, len(data), 2)]
     return data
 
-def sample2arp(samples,banks):
-    population_n_dict = {}
-    if args.database == "Greece":
-        if args.total:
-            population_n = total_table.shape[0]
-        else:
-            for bank in banks:
-                population_n_dict[bank] = total_table[total_table['bank']==bank].shape[0]
-    else:
-        if args.total:
-            population_n = total_table.shape[0]
-        else:
-            for bank in banks:
-                population_n_dict[bank] = total_table[total_table['bank']==bank].shape[0]
-    banks = list(samples.keys())
-    if args.total:
-        nbsample = 1
-    else:
-        nbsample = len(banks)
-
+def sample2arp(samples,bootstrap_n):
     arp_content = f'''[Profile]
 
     Title="Genetic Data"
-    NbSamples={nbsample}
+    NbSamples=1
     GenotypicData=1
     GameticPhase=1
     DataType=STANDARD 
@@ -73,87 +48,72 @@ def sample2arp(samples,banks):
 [[Samples]]
 '''
     counter = 0
-    if args.total:
-        name = bank[0]
-        data = bootstrap(samples[name],population_n)
-        arp_content += f'''SampleName="{args.database}"
+    data = bootstrap(samples,bootstrap_n)
+    arp_content += f'''SampleName="Bootstrap"
     SampleSize={len(data)}
     SampleData= {{
 '''
-        for row in data.iterrows():
-            counter +=1
-            id = str(counter)
-            arp_content += f"{id}\t" + f"1\t" + row[0] + "\n" + "\t" + row[1] + "\n"
-        arp_content += "}\n\n"
-        arp_content += '''[[Structure]]
+    for row in data:
+        counter +=1
+        id = "Greece_"+str(counter)
+        arp_content += f"{id}\t" + f"1\t" + row[0] + "\n" + "\t" + row[1] + "\n"
+    arp_content += "}\n\n"
+    arp_content += '''[[Structure]]
     StructureName="Simulated data"
     NbGroups=1
     Group={
     "Bootstrap"
     }'''
-    else:
-        for bank in banks:
-            population_n = population_n_dict[bank]
-            data_loop = bootstrap(samples[bank],population_n)
-            arp_content += f'''SampleName="{bank}"
-    SampleSize={len(data_loop)}
-    SampleData= {{
-    '''
-            for row in data_loop:
-                counter +=1
-                id = bank+ "_" +str(counter)
-                arp_content += f"{id}\t" + f"1\t" + row[0] + "\n" + "\t" + row[1] + "\n"
-            arp_content += "}\n\n"
-        arp_content += f'''[[Structure]]
-    StructureName="Simulated data"
-    NbGroups=1
-    Group={{
-    '''
-        for bank in banks:
-            arp_content+=f'    "{bank}"\n'
-        arp_content += '}'
     return arp_content
 
+def bootstrap2arp(lista):
+    counter = 0
+    bootstraps = lista[1]
+    part = lista[0]
+    for n in bootstraps:
+        if not os.path.exists(f"bootstrap/bootstrap_{args.loci}/bootstrap_{args.loci}_{n}"):
+            os.makedirs(f"bootstrap/bootstrap_{args.loci}/bootstrap_{args.loci}_{n}")
+        for i in range(args.perm):
+            if part == 0:
+                counter +=1
+                print(f"{counter}/{args.perm*len(bootstraps)}",end="\r")
+            file = f"bootstrap/bootstrap_{args.loci}/bootstrap_{args.loci}_{n}/bootstrap_{args.loci}_{i}.arp"
+            if not os.path.isfile(file):
+                with open(file, 'w') as arp_file:
+                    arp_file.write(sample2arp(samples,n))
+
+
+
+def run(threads,bootstraps):  # Number of equal parts
+    partitions = list(zip(range(threads),np.array_split(bootstraps,threads)))
+    p = Pool(processes=threads)
+    p.map(bootstrap2arp, partitions)
 
 parser = argparse.ArgumentParser(
                     prog='ProgramName',
                     description='What the program does',
                     epilog='Text at the bottom of help')
 
-parser.add_argument('--loci','-l', type=str,choices=['3','5'], help='Number of loci',required='-d'=="Greece")
-parser.add_argument('--database','-d', type=str,choices=["Greece","DKMS"], help='database to use', required=True)
-parser.add_argument('--total','-to', action='store_true', help='Total of database', required=False)
+parser.add_argument('--loci','-l', type=str,choices=['3','5'], help='Number of loci',required=True)
 parser.add_argument('--perm','-p', type=int, help='Number of permutations', required=True)
+parser.add_argument('--bootstrap','-b', type=str, help='Number of bootstrap samples', required=True)
+parser.add_argument('--threads','-t', type=int, help='Number of threads to use', required=True)
 
 args = parser.parse_args()
 
-if args.total:
-    total = "_total"
-else:
-    total = ""
+xml = f"bootstrap/bootstrap_{args.loci}.res/bootstrap_{args.loci}.xml"
+samples = freq(xml)
+total_table = pd.read_pickle("all_original_unmerged.pickle")
+total_table = total_table[total_table['type']=="CBU"]
 
-if args.database == "Greece":
-    xml = f"bootstrap/output_{args.loci}{total}.res/output_{args.loci}{total}.xml"
-    samples = freq(xml)
-else:
-    xml = f"bootstrap/output_dkms{total}.res/output_dkms{total}.xml"
-    samples = freq(xml)
+if not os.path.exists(f"bootstrap/bootstrap_{args.loci}"):
+    os.makedirs(f"bootstrap/bootstrap_{args.loci}")
 
-banks = list(samples.keys())
-
-if args.database == "Greece":
-    total_table = pd.read_pickle("all_original_unmerged.pickle")
-else:
-    total_table = pd.read_pickle("dkms.pkl")
-
-if not os.path.exists(f"bootstrap/bootstrap_{args.loci}{total}"):
-    os.makedirs(f"bootstrap/bootstrap_{args.loci}{total}")
 counter = 0
-for i in range(args.perm):
-    counter +=1
-    print(f"{counter}/{args.perm}",end="\r")
-    with open(f'bootstrap/bootstrap_{args.loci}{total}/bootstrap_{args.loci}{total}_{i}.arp', 'w') as arp_file:
-        arp_file.write(sample2arp(samples,banks))
+bootlist = [int(i) for i in args.bootstrap.split(",")]
+bootstraps = range(bootlist[0],bootlist[1]+1)
+
+run(args.threads,bootstraps)
 
 
 
