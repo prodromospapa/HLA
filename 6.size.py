@@ -200,7 +200,7 @@ if loci == 5:
     plt.plot(meann_9.keys(),np.array(list(meann_9.values()))*100,label="9/10",color="red")
     plt.fill_between(meann_9.keys(),np.array(list(minn_9.values()))*100,np.array(list(maxx_9.values()))*100,alpha=0.5,color="red")
 plt.legend()
-plt.xlabel("Number of samples")
+plt.xlabel("Number of Donors")
 plt.ylabel("Percentage of matches (%)")
 if not os.path.isdir("size_plots"):
     os.mkdir("size_plots")
