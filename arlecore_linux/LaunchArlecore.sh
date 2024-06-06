@@ -16,6 +16,10 @@ elif [ "$parameter" == "BOOT" ]; then
     settingsFile=arlecore_linux/bootstrap.ars
 elif [ "$parameter" == "FREQ" ]; then
     settingsFile=arlecore_linux/haplotype_freq.ars
+elif [ "$parameter" == "STATS" ]; then
+    settingsFile=arlecore_linux/stats.ars
+elif [ "$parameter" == "LD" ]; then
+    settingsFile=arlecore_linux/ld.ars
 fi
 
 

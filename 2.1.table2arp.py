@@ -58,6 +58,13 @@ def xl2arp(data):
     Group={{
     "DKMS"
     }}'''
+        else:
+            arp_content += f'''[[Structure]]
+    StructureName="Simulated data"
+    NbGroups=1
+    Group={{
+    "Greece"
+    }}'''
     else:
         for bank in banks:
             data_loop = data[data['bank']==bank]
@@ -74,8 +81,8 @@ def xl2arp(data):
                 arp_content += f"{id}\t" + f"1\t" + '\t'.join(row[loci_l[0]]) + "\n" + "\t" + '\t'.join(row[loci_l[1]]) + "\n"
                 print(f"{counter}/{total}",end="\r")
             arp_content += "}\n\n"
-        if args.database == "DKMS":
-            arp_content += f'''[[Structure]]
+        #if args.database == "DKMS":
+        arp_content += f'''[[Structure]]
     StructureName="Simulated data"
     NbGroups=1
     Group={{
@@ -89,6 +96,7 @@ parser = argparse.ArgumentParser(description='Convert excel file to arlequin for
 parser.add_argument('--loci','-l', type=str,choices=['3','5'], help='Number of loci',required='-d'=="Greece")
 parser.add_argument('--database','-d', type=str,choices=["Greece","DKMS"], help='database to use', required=True)
 parser.add_argument('--total','-to', action='store_true', help='Total of database', required=False)
+parser.add_argument('--type','-t', type=str,choices=['CBU','BMD',"all"], help='Type of data', required="-to"==True)
 
 args = parser.parse_args()
 
@@ -108,24 +116,33 @@ if args.database == "Greece":
         os.makedirs('output')
 
     data = pd.read_pickle(input)
+    if args.type == "CBU":
+        data = data[data['type']=='CBU']
+        type_ = "_CBU"
+    elif args.type == "BMD":
+        type_ = "_BMD"
+        data = data[data['type']=='BMD']
+    else:
+        type_ = ""
 
     if loci == '3':
         loci_list = ["A1","A2","B1","B2","DRB1_1","DRB1_2"]
         data = data[["ID","bank"]+loci_list]
         arp_content= xl2arp(data)
-        with open(f'output/output_{loci}{total}.arp', 'w') as arp_file:
+        with open(f'output/output_{loci}{total}{type_}.arp', 'w') as arp_file:
             arp_file.write(arp_content)
 
     elif loci == '5':
         loci_list = ["A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]
         data = data[data['loci']==5][["ID","bank"]+loci_list]
         arp_content= xl2arp(data)
-        with open(f'output/output_{loci}{total}.arp', 'w') as arp_file:
+        with open(f'output/output_{loci}{total}{type_}.arp', 'w') as arp_file:
             arp_file.write(arp_content)
 
-    os.system(f'bash arlecore_linux/LaunchArlecore.sh output/output_{loci}{total}.arp ELB')
-    os.system(f"mv output/output_{loci}{total}.res/PhaseDistribution/ELB_Best_Phases.arp output/output_{loci}{total}.arp")
-    os.system(f"rm -r output/output_{loci}{total}.res/PhaseDistribution/")
+    #afta trexe ta gia phased
+    #os.system(f'bash arlecore_linux/LaunchArlecore.sh output/output_{loci}{total}.arp ELB')
+    #os.system(f"mv output/output_{loci}{total}.res/PhaseDistribution/ELB_Best_Phases.arp output/output_{loci}{total}.arp")
+    #os.system(f"rm -r output/output_{loci}{total}.res/PhaseDistribution/")
 else:
     data = pd.read_pickle("dkms.pkl")
     data = data[["bank","A1","A2","B1","B2","C1","C2","DRB1_1","DRB1_2","DQB1_1","DQB1_2"]]

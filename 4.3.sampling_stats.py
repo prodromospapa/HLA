@@ -91,7 +91,7 @@ args = parser.parse_args()
 run_arl(f"bootstrap/bootstrap_{args.loci}.arp")
 obs_hwe, obs_fst = read_stats(f"bootstrap/bootstrap_{args.loci}.res/bootstrap_{args.loci}.xml")
 
-
+#bootstrap
 bootstraps_folders =[i for i in os.listdir(f"bootstrap/bootstrap_{args.loci}")]
 df = run(args.threads,bootstraps_folders)
 df.index.name = "Bootstrap"

@@ -21,10 +21,11 @@ if args.loci == '5':
 all_ids = data["ID"].tolist()
 data = data[data["type"]=="CBU"] 
 ids = data["ID"].tolist()
+
 remove_ids = [i for i in all_ids if i not in ids]
 with open("remove_ids.txt","w") as f:
     f.write("\n".join(remove_ids))
-input_file = f"output/output_{args.loci}_total.arp"
+input_file = f"output_elb/output_{args.loci}_total.arp"
 output_file = f"bootstrap/bootstrap_{args.loci}.arp"
 os.system('''awk 'NR==FNR{a[$0];next} {if ($1 in a) {getline;next} else {print}}' remove_ids.txt ''' + f'"{input_file}" > "{output_file}"')
 os.system(f"sed -i 's/SampleSize=[0-9]*/SampleSize={len(data)}/' {output_file}")
