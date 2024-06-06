@@ -33,7 +33,7 @@ def counter_9(df):
     return a.add(b, fill_value=0)
 
 
-def compare_6(recipient,size,n,pro):
+def compare_6(recipient,size,n,pro,counter):
     results = []
     for _ in range(args.repeticions):
         if phase:
@@ -47,9 +47,9 @@ def compare_6(recipient,size,n,pro):
         if n == 0:
             counter += 1
             print(f"{counter}/{pro}",end="\r")
-    return results
+    return results,counter
 
-def compare_9_10(recipient,size,n,pro):
+def compare_9_10(recipient,size,n,pro,counter):
     ni = []
     te = []
     for _ in range(args.repeticions):
@@ -68,7 +68,7 @@ def compare_9_10(recipient,size,n,pro):
         if n == 0:
             counter += 1
             print(f"{counter}/{pro}",end="\r")
-    return ni,te
+    return ni,te,counter
 
 def matches(part):
     n = part[0]
@@ -84,13 +84,13 @@ def matches(part):
     for size in sizes:
         if size:
             if loci== 3:                
-                res = compare_6(recipient,size,n,pro)
+                res,counter = compare_6(recipient,size,n,pro,counter)
                 meann[size] = np.mean(res)
                 maxx[size] = np.max(res)
                 minn[size] = np.min(res)
             else:
 
-                ni,te = compare_9_10(recipient,size,n,pro)
+                ni,te,counter = compare_9_10(recipient,size,n,pro,counter)
                 meann[size] = np.mean(ni)
                 meann_9[size] = np.mean(te)
                 maxx[size] = np.max(ni)
@@ -110,7 +110,9 @@ def split_and_transpose(lst, n):
 
 def run(n):
     sizes = list(range(min_size, max_size + 1,step))
-    partitions = list(zip(range(n),split_and_transpose(sizes, n)))
+    size_list = split_and_transpose(sizes, n)
+    size_list = sorted(size_list,key=sum,reverse=True)
+    partitions = list(zip(range(n),size_list))
     p = Pool(processes=n)
     if loci == 3:
         meann,minn,maxx = zip(*p.map(matches, partitions))
